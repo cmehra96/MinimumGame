@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="minimumGame.MinimumGame" android:versionCode="1" android:versionName="1.0" android:installLocation="preferExternal">
-	<uses-sdk android:minSdkVersion="16" />
-	<application android:label="MinimumGame" android:icon="@drawable/Icon" android:theme="@style/Theme.AppCompat.NoActionBar" android:hardwareAccelerated="false" android:largeHeap="true">
-		<activity android:label="@string/ApplicationName" android:name="minimumGame.MainActivity" android:screenOrientation="landscape" android:configChanges="orientation|screenSize|keyboardHidden" />
-		<activity android:label="GameActivity" android:name="minimumGame.MiimumGame.GameActivity" android:screenOrientation="landscape" android:configChanges="orientation|screenSize" />
-
-	</application>
-</manifest>
