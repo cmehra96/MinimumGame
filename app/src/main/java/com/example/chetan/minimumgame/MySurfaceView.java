@@ -21,6 +21,7 @@ import android.view.SurfaceView;
 import android.os.Handler;
 import android.view.ViewConfiguration;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -59,6 +60,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private long startclicktime;
     private final int MIN_CLICK_DURATION=1000;
     private ArrayList<Card> tempLongtouchList= new ArrayList<>();
+    private ArrayList<Integer> tempListindex= new ArrayList<>();
+
 
 
     public MySurfaceView(Context context) {
@@ -170,96 +173,30 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
    // @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-         Log.d(TAG,"Inside Touch Event");
-        float lasttouched_X, lasttouched_Y;
-        Card localcard;
-        int index=-1;
-        Log.d(TAG,"Inside OnTouch event");
-        gestureDetector.onTouchEvent(event);
-        return true;
-
-      /*  if(event.getAction()==MotionEvent.ACTION_DOWN)
-                longpressedhandler.postDelayed(longpressedrunnable,ViewConfiguration.getLongPressTimeout());
-        if((event.getAction()==MotionEvent.ACTION_MOVE)||(event.getAction()==MotionEvent.ACTION_UP))
-            {
-                longpressedhandler.removeCallbacks(longpressedrunnable);
-                swapSingleTouchCard(event);
-            }
-
-        return super.onTouchEvent(event);
-        */
-        //Working code till now :)
-       /*switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:
-                longpressedhandler.postDelayed(longpressedrunnable,500);
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-
-           case MotionEvent.ACTION_UP:
-               longpressedhandler.removeCallbacks(longpressedrunnable);
-               if(!isLongTouched)
-               {
-                   swapSingleTouchCard(event);
-
-               }
-
-               break;
-
-        }
-        return true;
-        */
-
-        /*switch (event.getAction())
-        {
-            case MotionEvent.ACTION_DOWN:
-              //  startclicktime=Calendar.getInstance().getTimeInMillis();
-                break;
-
-            case  MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
-                long clickDuration=Calendar.getInstance().getTimeInMillis()-startclicktime;
-                if(clickDuration>=MIN_CLICK_DURATION)
-                {
-                    Log.d(TAG,"Inside long press");
-                }
-                else
-                {
-                    Log.d(TAG,"Inside single click ");
-                    swapSingleTouchCard(event);
-                }
-                break;
+        synchronized (thread.getMySurfaceHolder()) {
+            Log.d(TAG, "Inside Touch Event");
+            gestureDetector.onTouchEvent(event);
         }
         return true;
 
-*/
 
-
-
-         //  if(event.getAction()==MotionEvent.ACTION_DOWN||event.getAction()==MotionEvent.ACTION_MOVE||event.getAction()==MotionEvent.ACTION_UP)
-            //    swapSingleTouchCard(event);
-
-       // return true;
-
-        //  return true;
-
-       // if(gestureDetector.onTouchEvent(event))
-      //  {
-      //      return true;
-       // }
 
 
     }
-        // Code for Long touch event
-    Runnable longpressedrunnable= new Runnable() {
-        @Override
-        public void run() {
-            Log.d(TAG,"Inside long pressed event");
-            isLongTouched=true;
-        }
-    };
 
-
+    /**
+     * Method to swap Main Player card with
+     * either Dealt Deck or with Discarded
+     * Deck, this method will check whether
+     * user has touched Main Player deck,
+     * Dealt Deck or Discarded Deck, if
+     * user has touched Main Deck using
+     * long touch it will add those touch
+     * cards to temporary deck, till
+     * user does not touch Discarde/
+     * Dealt Deck
+     * @param e: to determine which type of event has performed.
+     */
     public void swapSingleTouchCard(MotionEvent e) {
         float lasttouched_X, lasttouched_Y;
         Card localcard;
@@ -267,21 +204,23 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         lasttouched_X = e.getX();
         lasttouched_Y = e.getY();
 
-        if (((lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())))==false &&isLongTouched) {
-
+        // Code for long touch and single touch swap
+        if(((lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())))==false &&isLongTouched) // Main Player Deck, card  is touched
+        {
             addTouchedCardToLongTouched(e);
         }
-        else {
-            if (touchedcard == null)       // To find single touch card
+        else if (isLongTouched==false && touchedcard==null)
+        {
+            index = cardTouched((int) lasttouched_X, (int) lasttouched_Y);
+            if (index > -1) {
+                touchedcard = MainPlayer.getCard(index);
+                cardindex = index;
+            }
+        }
+        else if(lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())) //if touched card is Discard deck
+        {
+            if(touchedcard!=null)       // to replace with single card
             {
-                index = cardTouched((int) lasttouched_X, (int) lasttouched_Y);
-                if (index > -1) {
-                    touchedcard = MainPlayer.getCard(index);
-                    cardindex = index;
-                }
-            } else if (touchedcard != null && ((lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth()))))  //&& (lasttouched_Y>=DiscardedDeck_CurrentY && lasttouched_Y<(DiscardedDeck_CurrentY+ DiscardedDeck.getCard().getImage().getWidth()))))
-            {
-
                 replacedcard = DiscardedDeck.Deal(true);
                 Card swapcard = MainPlayer.swapCard(replacedcard, cardindex);
                 swapcard.setCurrent_X(DiscardedDeck_CurrentX);
@@ -290,9 +229,29 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 touchedcard = null;
                 cardindex = -1;
             }
+            else if(isLongTouched)
+            {
+                int i=tempListindex.size()-1;
+                Card Discarddeckcard;
+                Discarddeckcard=DiscardedDeck.Deal(true);
+
+               while(i>=0)
+               {
+                    MainPlayer.removeCard(tempListindex.get(i));
+                    Card removecard= tempLongtouchList.remove(i);
+                    removecard.setCurrent_X(DiscardedDeck_CurrentX);
+                    removecard.setCurrent_Y(DiscardedDeck_CurrentY);
+                    DiscardedDeck.add(removecard);
+                    i--;
+
+               }
+               tempListindex.clear();
+               tempLongtouchList.clear();
+               MainPlayer.add(Discarddeckcard);
+               isLongTouched=false;
+            }
         }
-        // Code for long touch and single touch swap
-        if(isLongTouched &&)
+
     }
 
     private int cardTouched(int lasttouched_x, int lasttouched_y) {
@@ -312,6 +271,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     public void addTouchedCardToLongTouched(MotionEvent event)
     {
+
         float lasttouched_X, lasttouched_Y;
         int index=-1;
         lasttouched_X=event.getX();
@@ -321,6 +281,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         if(index>-1)
         {
             tempLongtouchList.add(MainPlayer.getCard(index));
+            tempListindex.add(index);
+
         }
 
 
@@ -328,20 +290,6 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
- /* @Override
-    protected void onDraw(Canvas canvas) {
-
-        canvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
-        drawDealtDeck(canvas);
-
-        if(DiscardedDeck.Count()==0) {          //To add card in discarded deck only first time
-            setDiscardedDeck();
-        }
-        drawDiscardedDeck(canvas);
-        setMainPlayer();
-        DrawMainPlayerDeck(canvas);
-    }
-*/
     public  void render(Canvas canvas)
     {
         canvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);

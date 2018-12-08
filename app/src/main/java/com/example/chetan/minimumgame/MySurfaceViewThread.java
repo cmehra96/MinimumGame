@@ -22,6 +22,10 @@ public class MySurfaceViewThread extends Thread {
 
     }
 
+    public SurfaceHolder getMySurfaceHolder()
+    {
+        return mySurfaceHolder;
+    }
     @SuppressLint("WrongCall")
     @Override
     public void run() {
@@ -31,7 +35,9 @@ public class MySurfaceViewThread extends Thread {
             c=null;
             try{
                 c= mySurfaceHolder.lockCanvas();
-                mySurfaceView.render(c);
+                synchronized (mySurfaceHolder) {
+                    mySurfaceView.render(c);
+                }
             }
             catch(Exception e)
             {

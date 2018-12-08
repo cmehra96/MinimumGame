@@ -101,4 +101,9 @@ public class Deck {
         deck.add(index,replacedcard);
         return removedcard;
     }
+
+    public void removeCard(int index)
+    {
+        Card removecard=deck.remove(index);
+    }
 }
