@@ -41,7 +41,7 @@ public class MySurfaceViewThread extends Thread {
             }
             catch(Exception e)
             {
-                Log.e("Thread Class run method","exception",e);
+               // Log.e("Thread Class run method","exception",e);
             }
 
             finally {
