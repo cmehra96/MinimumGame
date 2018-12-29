@@ -3,7 +3,7 @@ package com.example.chetan.minimumgame;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-public class Card {
+public class Card implements Comparable {
     private int current_X;
     private int current_Y;
     private boolean showcardface;
@@ -80,4 +80,22 @@ public class Card {
         this.current_Y = current_Y;
     }
 
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Card)) {return false;}
+        Card c= (Card)obj;
+        return  (this.suit== c.suit && this.CardValue== c.CardValue);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return suit.getValue()* 13 +CardValue.getRank();
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ((Integer)hashCode()).compareTo(o.hashCode());
+    }
 }

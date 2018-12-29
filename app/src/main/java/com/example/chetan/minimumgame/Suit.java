@@ -19,5 +19,8 @@ public enum Suit {
             return name;
         }
 
+    public int getValue() {
+        return value;
+    }
 
 }

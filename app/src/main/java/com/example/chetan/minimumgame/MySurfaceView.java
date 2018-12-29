@@ -24,6 +24,7 @@ import android.view.ViewConfiguration;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.LogRecord;
 
@@ -159,6 +160,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             }
 
         }
+        //DeatlDeck.shuffle();
         DealCards();
     }
 
@@ -168,7 +170,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         MainPlayer.add(DeatlDeck.Deal(true));
         MainPlayer.add(DeatlDeck.Deal(true));
         DiscardedDeck.add(DeatlDeck.Deal(true));
-
+        MainPlayer.sort();
 
     }
 
@@ -236,29 +238,28 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             //    Log.d(TAG,String.valueOf(swapcard.getCurrent_X()));
             //    Log.d(TAG,String.valueOf(swapcard.getCurrent_Y()));
                 DiscardedDeck.add(swapcard);
-              // Log.d(TAG,MainPlayer.getCard(cardindex).;)
                 touchedcard = null;
                 cardindex = -1;
 
             }
             else if(isLongTouched)
             {
-                int i=tempListindex.size()-1;
+                int size=tempListindex.size()-1;
+                int i=0;
                 Card Discarddeckcard;
                 Discarddeckcard=DiscardedDeck.Deal(true);
-
-               while(i>=0)
+               while(i<=size)
                {
-                    MainPlayer.removeCard(tempListindex.get(i));
-                    Card removecard= tempLongtouchList.remove(i);
+                   Card removecard=MainPlayer.removeCard(tempListindex.get(i));
+                   //  tempLongtouchList.remove(i);
                     removecard.setCurrent_X(DiscardedDeck_CurrentX);
                     removecard.setCurrent_Y(DiscardedDeck_CurrentY);
                     DiscardedDeck.add(removecard);
-                    i--;
+                    i++;
 
                }
                tempListindex.clear();
-               tempLongtouchList.clear();
+              // tempLongtouchList.clear();
                MainPlayer.add(Discarddeckcard);
                isLongTouched=false;
             }
@@ -292,7 +293,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         isLongTouched=true;
         if(index>-1)
         {
-            tempLongtouchList.add(MainPlayer.getCard(index));
+            //tempLongtouchList.add(MainPlayer.getCard(index));
             tempListindex.add(index);
 
         }
@@ -313,6 +314,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         drawDiscardedDeck(canvas);
         setMainPlayer();
         DrawMainPlayerDeck(canvas);
+
     }
     private void drawDealtDeck (Canvas canvas){
         Card localcard = DeatlDeck.getCard();
@@ -352,6 +354,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int Down_Card_Gap = 0;
             int Down_Card_Gap_positive = 0;
             int Down_Card_Gap_negative = 0;
+            MainPlayer.sort();
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
                 localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
@@ -370,6 +373,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 Down_Card_Gap *= -1;
 
             }
+
 
         }
 
@@ -427,9 +431,6 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     class GestureListener extends GestureDetector.SimpleOnGestureListener{
     private static final String TAG = GestureListener.class.getSimpleName();  // To get name of class in Logging
         MySurfaceView mySurfaceView;
-
-
-
         public GestureListener(MySurfaceView paramMySurfaceView)
         {
             mySurfaceView=paramMySurfaceView;
@@ -438,7 +439,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onLongPress(MotionEvent e) {
 
-      //  Log.d(TAG,"Inside Long Pressed event");
+       //  Log.d(TAG,"Inside Long Pressed event");
             mySurfaceView.addTouchedCardToLongTouched(e);
     }
 
@@ -446,10 +447,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onDown(MotionEvent e) {
 
-      // don't return false here or else none of the other
-      // gestures will work
-
-        return  false;
+             return  false;
     }
 
 

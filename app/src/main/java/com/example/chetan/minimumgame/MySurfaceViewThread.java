@@ -36,6 +36,7 @@ public class MySurfaceViewThread extends Thread {
             try{
                 c= mySurfaceHolder.lockCanvas();
                 synchronized (mySurfaceHolder) {
+                   Thread.sleep(100);
                     mySurfaceView.render(c);
                 }
             }

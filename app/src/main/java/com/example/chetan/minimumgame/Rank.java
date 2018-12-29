@@ -29,4 +29,12 @@ public enum Rank {
    public  String getImageName()
     {return imageName;
     }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -102,8 +104,22 @@ public class Deck {
         return removedcard;
     }
 
-    public void removeCard(int index)
+    public Card removeCard(int index)
     {
-        Card removecard=deck.remove(index);
+         return deck.remove(index);
+    }
+
+    public  void shuffle()
+    {
+        Collections.shuffle(deck);
+    }
+    public void sort()
+    {
+           Collections.sort(deck, new Comparator<Card>() {
+            @Override
+            public int compare(Card lhs, Card rhs) {
+                return  lhs.compareTo(rhs);
+            }
+        });
     }
 }
