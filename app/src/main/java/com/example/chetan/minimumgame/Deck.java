@@ -118,7 +118,7 @@ public class Deck {
            Collections.sort(deck, new Comparator<Card>() {
             @Override
             public int compare(Card lhs, Card rhs) {
-                return  lhs.compareTo(rhs);
+                return  rhs.compareTo(lhs);
             }
         });
     }
