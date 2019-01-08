@@ -62,6 +62,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private final int MIN_CLICK_DURATION=1000;
     private ArrayList<Card> tempLongtouchList= new ArrayList<>();
     private ArrayList<Integer> tempListindex= new ArrayList<>();
+    private ArrayList<Player> Playerlist;
+    private final int no_of_players=6;
 
 
 
@@ -149,6 +151,17 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         DealtDeck_CurrentY = Screen_Center_Y - Card_Height / 2;
         DiscardedDeck_CurrentX= Screen_Center_X+Card_Width;
         DiscardedDeck_CurrentY= Screen_Center_Y- Card_Height/2;
+        Playerlist= new ArrayList<Player>(no_of_players);
+        initializePlayers();
+    }
+
+    private void initializePlayers() {
+        for(int i=0;i<no_of_players;i++)
+            if(0==i)
+                Playerlist.add(new Player("You"));
+
+        else
+            Playerlist.add(new Player("Bot" +i));
     }
 
 
@@ -160,18 +173,35 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             }
 
         }
-        //DeatlDeck.shuffle();
+
         DealCards();
     }
 
     private void DealCards() {
       //  Log.d(TAG, "Inside Deal Card method");
-        MainPlayer.add(DeatlDeck.Deal(true));
+      /*  MainPlayer.add(DeatlDeck.Deal(true));
         MainPlayer.add(DeatlDeck.Deal(true));
         MainPlayer.add(DeatlDeck.Deal(true));
         DiscardedDeck.add(DeatlDeck.Deal(true));
         MainPlayer.sort();
+        */
+        DeatlDeck.shuffle();
+        for(int i =0; i<no_of_players;i++)
+        {
+            if(0==i)
+            {
+                Playerlist.get(i).addToHand(DeatlDeck.Deal(true));
+                Playerlist.get(i).addToHand(DeatlDeck.Deal(true));
 
+            }
+            else
+            {
+                Playerlist.get(i).addToHand(DeatlDeck.Deal(false));
+                Playerlist.get(i).addToHand(DeatlDeck.Deal(false));
+
+
+            }
+        }
     }
 
    // @SuppressLint("ClickableViewAccessibility")
@@ -354,7 +384,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int Down_Card_Gap = 0;
             int Down_Card_Gap_positive = 0;
             int Down_Card_Gap_negative = 0;
-            MainPlayer.sort();
+         /*   MainPlayer.sort();
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
                 localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
@@ -373,6 +403,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 Down_Card_Gap *= -1;
 
             }
+            */
+
+
 
 
         }

@@ -25,6 +25,7 @@ public class Deck {
      */
     public void add(Card card) {
         deck.add(card);
+        //sort();
     }
 
     /**
