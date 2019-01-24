@@ -2,6 +2,7 @@ package com.example.chetan.minimumgame;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +26,7 @@ public class Deck {
      */
     public void add(Card card) {
         deck.add(card);
-        //sort();
+  //      sort();
     }
 
     /**
@@ -122,5 +123,53 @@ public class Deck {
                 return  rhs.compareTo(lhs);
             }
         });
+    }
+
+    /**
+     * To Compare each
+     * Card of the deck
+     * with the parameter card
+     * and return largest one
+     * @param card
+     * @return index of the largest card of the deck. As well as whether that
+     * card is larger than parameter card.
+     */
+    public Pair<Integer,Boolean> getLargestCardByRank(Card card) {
+        int index=0;
+        Card temp= deck.get(0);
+        for(int i=1;i<Count();i++)
+        {
+            if(deck.get(i).cardRank()>temp.cardRank()) {
+                temp = deck.get(i);
+                index = i;
+            }
+        }
+        if (temp.cardRank()>card.cardRank())
+            return new Pair<>(index,true);
+        else
+           return new Pair<>(index,false);
+    }
+
+    public ArrayList<Card> getDeck() {
+        return deck;
+    }
+
+    /**
+     * Method to refill the empty deck, mainly for DealtDeck
+     * @param DiscardedDeck Deck from which cards to be filled
+     * @param dealtDeck_CurrentX update currentX of the card
+     * @param dealtDeck_CurrentY update currentY of the card
+     */
+    public void refill(Deck DiscardedDeck,int dealtDeck_CurrentX, int dealtDeck_CurrentY)
+    {
+        for (Card currentcard: DiscardedDeck.getDeck()) {
+            {
+                currentcard.setCurrent_X(dealtDeck_CurrentX);
+                currentcard.setCurrent_Y(dealtDeck_CurrentY);
+                currentcard.setShowcardface(false);
+                deck.add(currentcard);
+            }
+            shuffle();
+        }
     }
 }

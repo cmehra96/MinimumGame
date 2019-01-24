@@ -75,5 +75,8 @@ public class Player {
         mydeck.add(card);
         mydeck.sort();
     }
-
+    public int decksize()
+    {
+        return mydeck.Count();
+    }
 }

@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -47,6 +48,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Deck MainPlayer;
     private Deck DeatlDeck;
     private Deck DiscardedDeck;
+    private Deck Top_Center_Player;
     private Bitmap BlueBackCard;
     private int DealtDeck_CurrentX;
     private int DealtDeck_CurrentY;
@@ -63,7 +65,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<Card> tempLongtouchList= new ArrayList<>();
     private ArrayList<Integer> tempListindex= new ArrayList<>();
     private ArrayList<Player> Playerlist;
-    private final int no_of_players=6;
+    private final int no_of_players=2;
+    private int current_player;
 
 
 
@@ -147,11 +150,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         MainPlayer = new Deck();
         DeatlDeck = new Deck();
         DiscardedDeck = new Deck();
+        Top_Center_Player= new Deck();
         DealtDeck_CurrentX = Screen_Center_X - Card_Width;
         DealtDeck_CurrentY = Screen_Center_Y - Card_Height / 2;
         DiscardedDeck_CurrentX= Screen_Center_X+Card_Width;
         DiscardedDeck_CurrentY= Screen_Center_Y- Card_Height/2;
         Playerlist= new ArrayList<Player>(no_of_players);
+        current_player=0;
         initializePlayers();
     }
 
@@ -179,14 +184,20 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private void DealCards() {
       //  Log.d(TAG, "Inside Deal Card method");
-      /*  MainPlayer.add(DeatlDeck.Deal(true));
+
+        DeatlDeck.shuffle();
         MainPlayer.add(DeatlDeck.Deal(true));
         MainPlayer.add(DeatlDeck.Deal(true));
+        MainPlayer.add(DeatlDeck.Deal(true));
+        Top_Center_Player.add(DeatlDeck.Deal(true));
+        Top_Center_Player.add(DeatlDeck.Deal(true));
+        Top_Center_Player.add(DeatlDeck.Deal(true));
         DiscardedDeck.add(DeatlDeck.Deal(true));
         MainPlayer.sort();
-        */
-        DeatlDeck.shuffle();
-        for(int i =0; i<no_of_players;i++)
+        Top_Center_Player.sort();
+
+
+      /*  for(int i =0; i<no_of_players;i++)
         {
             if(0==i)
             {
@@ -202,6 +213,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
             }
         }
+        */
     }
 
    // @SuppressLint("ClickableViewAccessibility")
@@ -232,7 +244,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
      * @param e: to determine which type of event has performed.
      */
     public void swapSingleTouchCard(MotionEvent e) {
-       // Log.d(TAG,"Inside swapSingle Touch Method");
+        Log.d(TAG,"Inside swapSingle Touch Method");
         float lasttouched_X, lasttouched_Y;
         Card localcard;
         int index = -1;
@@ -338,14 +350,66 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         canvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
         drawDealtDeck(canvas);
         setDiscardedDeck();
-        if(DiscardedDeck.Count()==0) {          //To add card in discarded deck only first time
-
-        }
         drawDiscardedDeck(canvas);
         setMainPlayer();
         DrawMainPlayerDeck(canvas);
+        SetTopCenterPlayerDeck();
+        DrawTopCenterPlayerDeck(canvas);
+        startGame();
 
     }
+
+    private void startGame() {
+        Log.d(TAG,"Inside Start Game method");
+        if(current_player>=no_of_players)
+            current_player=0;
+        else
+            current_player++;
+        if(current_player==2)
+        {
+           pickBestCard(Top_Center_Player, DiscardedDeck.getCard());
+
+        }
+
+
+    }
+
+    private void pickBestCard(Deck playerdeck, Card card) {
+        Pair<Integer, Boolean> result = playerdeck.getLargestCardByRank(card);
+        if(result.second==true)
+        {
+           swapFromDiscardedDeck(playerdeck,result.first);
+        }
+        else
+            swapFromDealtDeck(playerdeck,result.first);
+
+    }
+
+    private void swapFromDiscardedDeck(Deck playerdeck, int cardindex) {
+        Log.d(TAG,"inside swap from discarded deck");
+        Card temp1=DiscardedDeck.Deal(true);
+        Card temp= playerdeck.removeCard(cardindex);
+        DiscardedDeck.add(temp);
+        playerdeck.add(temp1);
+
+
+
+    }
+    private void swapFromDealtDeck(Deck playerdeck, int cardindex) {
+        Log.d(TAG,"Inside swap from dealt deck");
+        Card temp= DeatlDeck.Deal(true);
+        if(DeatlDeck.Count()==0)
+        {
+            Log.d(TAG,"Dealt Deck empty refilling");
+            DeatlDeck.refill(DiscardedDeck,DealtDeck_CurrentX,DealtDeck_CurrentY);
+        }
+        Card temp1= playerdeck.removeCard(cardindex);
+        playerdeck.add(temp);
+        DiscardedDeck.add(temp1);
+        Log.d(TAG,"Dealt Deck count" +DeatlDeck.Count() );
+
+    }
+
     private void drawDealtDeck (Canvas canvas){
         Card localcard = DeatlDeck.getCard();
         canvas.drawBitmap(localcard.getImage(), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
@@ -365,8 +429,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     Card localcard;
     Bitmap localimage;
     localcard=DiscardedDeck.getCard();
-    localimage= DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
-    localcard.setImage(localimage);
+    //localimage= DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
+   // localcard.setImage(localimage);
     localcard.setCurrent_X(DiscardedDeck_CurrentX);
     localcard.setCurrent_Y(DiscardedDeck_CurrentY);
     //DiscardedDeck.add(localcard);
@@ -384,7 +448,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int Down_Card_Gap = 0;
             int Down_Card_Gap_positive = 0;
             int Down_Card_Gap_negative = 0;
-         /*   MainPlayer.sort();
+            MainPlayer.sort();
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
                 localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
@@ -403,8 +467,14 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 Down_Card_Gap *= -1;
 
             }
-            */
 
+
+           /* while (currentiteration<Playerlist.get(0).decksize())
+            {
+
+
+            }
+            */
 
 
 
@@ -423,7 +493,53 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
         }
 
+        private void SetTopCenterPlayerDeck()
+        {
+            Log.d(TAG,"Inside Set Top Center Player Deck");
+            Card localcard;
+            Bitmap localimage=null;
+            int currentiteration=0;
+            int Down_Card_Gap=0;
+            int Down_Card_Gap_Postive=0;
+            int Down_Card_Gap_negative=0;
+            int cards=Top_Center_Player.Count();
+            while(currentiteration<cards)
+            {
+                localcard= Top_Center_Player.getCard(currentiteration);
+                localimage=DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
+                localcard.setImage(localimage);
+                localcard.setCurrent_Y(0);      //Y-Axis =0
+                Top_Center_Player.setCurrentCard(localcard,currentiteration);
+                currentiteration++;
+                if(Down_Card_Gap>=0)
+                {
+                    Down_Card_Gap_Postive=Down_Card_Gap;
+                    localcard.setCurrent_X(Screen_Center_X+Down_Card_Gap_Postive);
+                    Down_Card_Gap+=75;
+                }
+                else
+                {
+                    Down_Card_Gap_negative=Down_Card_Gap;
+                    localcard.setCurrent_X(Screen_Center_X+Down_Card_Gap_negative);
+                }
+                Down_Card_Gap*=-1;
+            }
+        }
 
+        private void DrawTopCenterPlayerDeck(Canvas canvas)
+        {
+            Card localcard;
+            int currentiteration=0;
+            int cardcount=Top_Center_Player.Count();
+            while(currentiteration< cardcount)
+            {
+                localcard=Top_Center_Player.getCard(currentiteration);
+                canvas.drawBitmap(localcard.getImage(),localcard.getCurrent_X(),localcard.getCurrent_Y(),null);
+                currentiteration++;
+            }
+        }
+
+/*
         private Bitmap DecodeSampleBitmapFromResource (Resources res,int resId,
         int reqWidth, int reqHeight){
 
@@ -456,7 +572,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
               return inSampleSize;
         }
+        */
     }
+
 
 /**
  * Class to implements Touch events

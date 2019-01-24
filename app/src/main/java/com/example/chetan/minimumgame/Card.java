@@ -1,7 +1,9 @@
 package com.example.chetan.minimumgame;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class Card implements Comparable {
     private int current_X;
@@ -23,6 +25,13 @@ public class Card implements Comparable {
         this.Image= image;
 
     }
+
+    Card(Rank value, Suit suit,boolean showcardface, int current_X,int current_Y)
+    {
+
+    }
+
+
 
     public  int GetImageId(Context currentcontext)
     {
@@ -47,7 +56,20 @@ public class Card implements Comparable {
     }
 
     public Bitmap getImage() {
+
         return Image;
+    }
+
+    public Bitmap getImage(Context currentcontext,int card_width, int card_height)
+    {
+        if(this.Image==null) {
+            getImagefromFile(currentcontext,card_width,card_height);
+        }
+        return this.Image;
+    }
+
+    private void getImagefromFile(Context currentcontext,int card_width, int card_height) {
+        Image=DecodeSampleBitmapFromResource(currentcontext.getResources(),GetImageId(currentcontext),card_width,card_height);
     }
 
     public int getCurrent_X() {
@@ -80,6 +102,11 @@ public class Card implements Comparable {
         this.current_Y = current_Y;
     }
 
+    public int cardRank()
+    {
+        return this.CardValue.getRank();
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -98,4 +125,39 @@ public class Card implements Comparable {
     public int compareTo(Object o) {
         return ((Integer)hashCode()).compareTo(o.hashCode());
     }
+
+
+    private Bitmap DecodeSampleBitmapFromResource (Resources res, int resId,
+                                                   int reqWidth, int reqHeight){
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    private int calculateInSampleSize (BitmapFactory.Options options,int reqWidth, int reqHeight)
+    {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+
+
+            int heightratio= (int)Math.round((double)height/reqHeight);
+            int widthratio= (int)Math.round((double)width/reqWidth);
+            inSampleSize= heightratio < widthratio ? widthratio : heightratio;
+        }
+
+        return inSampleSize;
+    }
+
 }
