@@ -28,6 +28,11 @@ public class Card implements Comparable {
 
     Card(Rank value, Suit suit,boolean showcardface, int current_X,int current_Y)
     {
+        this.CardValue=value;
+        this.suit=suit;
+        this.showcardface=showcardface;
+        this.current_X=current_X;
+        this.current_Y=current_Y;
 
     }
 

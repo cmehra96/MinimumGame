@@ -146,7 +146,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         Screen_Center_Y = Screen_Height / 2;
         Screen_Bottom_Middle_X = Screen_Center_X - Card_Width;
         Screen_Bottom_Middle_Y = Screen_Height - Card_Height;
-        BlueBackCard = DecodeSampleBitmapFromResource(getResources(), Card.GetBlueBackCardImageId(context), Card_Width, Card_Height);
+       // BlueBackCard = DecodeSampleBitmapFromResource(getResources(), Card.GetBlueBackCardImageId(context), Card_Width, Card_Height);
         MainPlayer = new Deck();
         DeatlDeck = new Deck();
         DiscardedDeck = new Deck();
@@ -174,7 +174,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
       //  Log.d(TAG, "inside AllocatedCardList method");
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
-                DeatlDeck.add(new Card(rank, suit, false, DealtDeck_CurrentX, DealtDeck_CurrentY , BlueBackCard));
+                DeatlDeck.add(new Card(rank, suit, false, DealtDeck_CurrentX, DealtDeck_CurrentY));
             }
 
         }
@@ -412,13 +412,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private void drawDealtDeck (Canvas canvas){
         Card localcard = DeatlDeck.getCard();
-        canvas.drawBitmap(localcard.getImage(), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
+        canvas.drawBitmap(localcard.getImage(context,Card_Width,Card_Height), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
     }
 
     private void drawDiscardedDeck(Canvas canvas) {
         //Log.d(TAG,"Inside Draw Discarded deck");
         Card localcard= DiscardedDeck.getCard();
-        canvas.drawBitmap(localcard.getImage(),localcard.getCurrent_X(),localcard.getCurrent_Y(),null);
+        canvas.drawBitmap(localcard.getImage(context,Card_Width,Card_Height),localcard.getCurrent_X(),localcard.getCurrent_Y(),null);
      //  Log.d(TAG,"discarded dec currentx");
        // Log.d(TAG,String.valueOf(localcard.getCurrent_X()));
      //   Log.d(TAG,String.valueOf(localcard.getCurrent_Y()));
@@ -451,9 +451,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             MainPlayer.sort();
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
-                localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
-                localcard.setImage(localimage);
-                localcard.setCurrent_Y(Screen_Height - localcard.getImage().getHeight());
+               // localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
+              //  localcard.setImage(localimage);
+                localcard.setCurrent_Y(Screen_Height - localcard.getImage(context,Card_Width,Card_Height).getHeight());
                 MainPlayer.setCurrentCard(localcard, currentiteration);
                 currentiteration++;
                 if (Down_Card_Gap >= 0) {
@@ -487,7 +487,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int currentiteration = 0;
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
-                canvas.drawBitmap(localcard.getImage(), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
+                canvas.drawBitmap(localcard.getImage(context,Card_Width,Card_Height), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
                 currentiteration++;
             }
 
@@ -506,8 +506,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             while(currentiteration<cards)
             {
                 localcard= Top_Center_Player.getCard(currentiteration);
-                localimage=DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
-                localcard.setImage(localimage);
+                //localimage=DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
+              //  localcard.setImage(localimage);
                 localcard.setCurrent_Y(0);      //Y-Axis =0
                 Top_Center_Player.setCurrentCard(localcard,currentiteration);
                 currentiteration++;
@@ -534,7 +534,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             while(currentiteration< cardcount)
             {
                 localcard=Top_Center_Player.getCard(currentiteration);
-                canvas.drawBitmap(localcard.getImage(),localcard.getCurrent_X(),localcard.getCurrent_Y(),null);
+                canvas.drawBitmap(localcard.getImage(context,Card_Width,Card_Height),localcard.getCurrent_X(),localcard.getCurrent_Y(),null);
                 currentiteration++;
             }
         }

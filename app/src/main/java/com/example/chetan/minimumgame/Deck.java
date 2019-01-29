@@ -108,7 +108,10 @@ public class Deck {
 
     public Card removeCard(int index)
     {
-         return deck.remove(index);
+        Card dealcards=deck.remove(index);
+        dealcards.setShowcardface(true);
+        return dealcards;
+
     }
 
     public  void shuffle()
@@ -168,8 +171,15 @@ public class Deck {
                 currentcard.setCurrent_Y(dealtDeck_CurrentY);
                 currentcard.setShowcardface(false);
                 deck.add(currentcard);
+
             }
+            DiscardedDeck.clear();
             shuffle();
+            DiscardedDeck.add(Deal(true));
         }
+    }
+
+    private void clear() {
+        deck.clear();
     }
 }
