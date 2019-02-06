@@ -1,15 +1,20 @@
 package com.example.chetan.minimumgame;
 
 import android.annotation.SuppressLint;
+import android.os.Looper;
+import android.view.Choreographer;
 import android.view.SurfaceHolder;
 import android.util.Log;
 import android.graphics.Canvas;
 
 
-public class MySurfaceViewThread extends Thread {
+public class MySurfaceViewThread extends Thread{ //implements Choreographer.FrameCallback {
+    private static final String TAG = MySurfaceViewThread.class.getSimpleName();  // To get name of class in Logging
     private MySurfaceView mySurfaceView;
     private SurfaceHolder mySurfaceHolder;
     boolean running;
+    private Choreographer myChoreographer = null;
+    private Looper myLooper = null;
 
     /**
      * Time per frame for 60 FPS
@@ -31,7 +36,46 @@ public class MySurfaceViewThread extends Thread {
     {
         return mySurfaceHolder;
     }
-    @SuppressLint("WrongCall")
+
+/*
+    @Override
+    public void run() {
+        Log.d(TAG,"Inside run method");
+        Looper.prepare();
+        myChoreographer=Choreographer.getInstance();
+        myChoreographer.postFrameCallbackDelayed(this,0);
+        myLooper=Looper.myLooper();
+        Looper.loop();
+        myChoreographer=null;
+        Log.d(TAG,"Exiting rendering");
+
+    }
+
+    @Override
+    public void doFrame(long l) {
+        Log.d(TAG,"imside do frame method");
+        Canvas c = null;
+        try {
+            c = mySurfaceHolder.lockCanvas();
+            mySurfaceView.render(c);
+        } catch (Exception e) {
+            Log.e("Thread Class run method", "exception", e);
+        } finally {
+            if (c != null) {
+                mySurfaceHolder.unlockCanvasAndPost(c);
+            }
+
+
+        }
+    }
+
+    public void stopThread()
+    {
+        myLooper.quit();
+    }
+    */
+     @SuppressLint("WrongCall")
+
     @Override
     public void run() {
         Canvas c;
@@ -78,4 +122,7 @@ public class MySurfaceViewThread extends Thread {
         }
 
     }
+
+
+
 }

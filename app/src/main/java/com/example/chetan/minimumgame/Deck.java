@@ -2,6 +2,7 @@ package com.example.chetan.minimumgame;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public class Deck {
 
     public  void shuffle()
     {
+        Log.d("Deck","shuffling");
         Collections.shuffle(deck);
     }
     public void sort()
@@ -173,9 +175,10 @@ public class Deck {
                 deck.add(currentcard);
 
             }
-            DiscardedDeck.clear();
             shuffle();
-            DiscardedDeck.add(Deal(true));
+
+             //DiscardedDeck.clear();
+           //DiscardedDeck.add(Deal(true));
         }
     }
 

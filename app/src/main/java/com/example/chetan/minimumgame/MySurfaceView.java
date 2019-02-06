@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 //import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -21,6 +22,7 @@ import android.view.SurfaceView;
 
 import android.os.Handler;
 import android.view.ViewConfiguration;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -67,6 +69,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<Player> Playerlist;
     private final int no_of_players=2;
     private int current_player;
+    MainActivity parent;
 
 
 
@@ -174,7 +177,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
       //  Log.d(TAG, "inside AllocatedCardList method");
         for (Suit suit : Suit.values()) {
             for (Rank rank : Rank.values()) {
-                DeatlDeck.add(new Card(rank, suit, false, DealtDeck_CurrentX, DealtDeck_CurrentY));
+                DeatlDeck.add(new Card(rank, suit, true, DealtDeck_CurrentX, DealtDeck_CurrentY));
             }
 
         }
@@ -259,18 +262,18 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         }
         else if (isLongTouched==false && touchedcard==null)
         {
-         //   Log.d(TAG,"Inside Single Touch Card Condition");
+            Log.d(TAG,"Inside Single Touch Card Condition");
             index = cardTouched((int) lasttouched_X, (int) lasttouched_Y);
             if (index > -1) {
                 touchedcard = MainPlayer.getCard(index);
                 cardindex = index;
             }
         }
-        else if(lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())) //if touched card is Discard deck
+        else if(lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X <= (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())) //if touched card is Discard deck
         {
             if(touchedcard!=null)       // to replace with single card
             {
-             //   Log.d(TAG,"Inside Single Touch Card Swap Conditon ");
+                Log.d(TAG,"Inside Single Touch Card Swap Conditon ");
                 replacedcard = DiscardedDeck.Deal(true);
                 Card swapcard = MainPlayer.swapCard(replacedcard, cardindex);
              //   Log.d(TAG,String.valueOf(swapcard.getCurrent_X()));
@@ -305,7 +308,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                MainPlayer.add(Discarddeckcard);
                isLongTouched=false;
             }
+            current_player++;
         }
+
 
     }
 
@@ -315,7 +320,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         while (index<MainPlayer.Count())
         {
             localcard=MainPlayer.getCard(index);
-            if(lasttouched_x>= localcard.getCurrent_X() && lasttouched_x<(localcard.getCurrent_X()+localcard.getImage().getWidth())) //&& (lasttouched_y>=localcard.getCurrent_Y() &&lasttouched_y <(localcard.getCurrent_Y()+localcard.getImage().getWidth())))
+            if(lasttouched_x>= localcard.getCurrent_X() && lasttouched_x<(localcard.getCurrent_X()+localcard.getImage().getWidth()) && (lasttouched_y>=localcard.getCurrent_Y() &&lasttouched_y <=(localcard.getCurrent_Y()+localcard.getImage().getWidth())))
             {
                 return index;
             }
@@ -361,20 +366,37 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private void startGame() {
         Log.d(TAG,"Inside Start Game method");
-        if(current_player>=no_of_players)
+        if(current_player==no_of_players)
             current_player=0;
-        else
-            current_player++;
-        if(current_player==2)
+
+       if(current_player==0) {
+           parent.runOnUiThread(new Runnable() {
+               @Override
+               public void run() {
+                //   Toast.makeText(parent, "Your turn", 0).show();
+               }
+           });
+       }
+
+      else if(current_player==1)
         {
            pickBestCard(Top_Center_Player, DiscardedDeck.getCard());
-
+            current_player++;
         }
+
 
 
     }
 
+    /**
+     * Method to pick best card based upon the largest card
+     * and swap that card with either dealt deck or discard
+     * deck
+     * @param playerdeck
+     * @param card
+     */
     private void pickBestCard(Deck playerdeck, Card card) {
+        Log.d(TAG,"Inside pick best card method");
         Pair<Integer, Boolean> result = playerdeck.getLargestCardByRank(card);
         if(result.second==true)
         {
@@ -403,6 +425,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             Log.d(TAG,"Dealt Deck empty refilling");
             DeatlDeck.refill(DiscardedDeck,DealtDeck_CurrentX,DealtDeck_CurrentY);
         }
+
         Card temp1= playerdeck.removeCard(cardindex);
         playerdeck.add(temp);
         DiscardedDeck.add(temp1);
@@ -502,6 +525,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int Down_Card_Gap=0;
             int Down_Card_Gap_Postive=0;
             int Down_Card_Gap_negative=0;
+            int Card_Gap= Screen_Width/10;
             int cards=Top_Center_Player.Count();
             while(currentiteration<cards)
             {
@@ -515,7 +539,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 {
                     Down_Card_Gap_Postive=Down_Card_Gap;
                     localcard.setCurrent_X(Screen_Center_X+Down_Card_Gap_Postive);
-                    Down_Card_Gap+=75;
+                    Down_Card_Gap+=Card_Gap;
                 }
                 else
                 {
@@ -538,6 +562,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 currentiteration++;
             }
         }
+
+    public void setActivity(MainActivity mainActivity) {
+        parent=mainActivity;
+
+    }
 
 /*
         private Bitmap DecodeSampleBitmapFromResource (Resources res,int resId,

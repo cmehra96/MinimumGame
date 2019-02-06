@@ -67,9 +67,9 @@ public class Card implements Comparable {
 
     public Bitmap getImage(Context currentcontext,int card_width, int card_height)
     {
-        if(this.Image==null) {
+
             getImagefromFile(currentcontext,card_width,card_height);
-        }
+
         return this.Image;
     }
 

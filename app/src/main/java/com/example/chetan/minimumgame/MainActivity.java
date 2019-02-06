@@ -14,8 +14,9 @@ public class MainActivity extends Activity {
        try {
 
            setContentView(R.layout.activity_main);
-       //   MySurfaceView surfaceView;
-        //  surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
+          MySurfaceView surfaceView;
+          surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
+          surfaceView.setActivity(this);
 
 
        }
