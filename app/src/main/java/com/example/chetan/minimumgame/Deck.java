@@ -27,7 +27,7 @@ public class Deck {
      */
     public void add(Card card) {
         deck.add(card);
-  //      sort();
+      //  sort();
     }
 
     /**
@@ -120,6 +120,11 @@ public class Deck {
         Log.d("Deck","shuffling");
         Collections.shuffle(deck);
     }
+
+    /**
+     * Method to sort deck in descending order.
+     */
+
     public void sort()
     {
            Collections.sort(deck, new Comparator<Card>() {
@@ -167,7 +172,7 @@ public class Deck {
      */
     public void refill(Deck DiscardedDeck,int dealtDeck_CurrentX, int dealtDeck_CurrentY)
     {
-        for (Card currentcard: DiscardedDeck.getDeck()) {
+       /* for (Card currentcard: DiscardedDeck.getDeck()) {
             {
                 currentcard.setCurrent_X(dealtDeck_CurrentX);
                 currentcard.setCurrent_Y(dealtDeck_CurrentY);
@@ -180,6 +185,19 @@ public class Deck {
              //DiscardedDeck.clear();
            //DiscardedDeck.add(Deal(true));
         }
+        */
+        int count=DiscardedDeck.Count()-1;
+        int i=0;
+        while(count>=0)
+        {
+            Card currentcard= DiscardedDeck.removeCard(count);
+            currentcard.setCurrent_X(dealtDeck_CurrentX);
+            currentcard.setCurrent_Y(dealtDeck_CurrentY);
+            currentcard.setShowcardface(false);
+            deck.add(currentcard);
+            count--;
+        }
+        shuffle();
     }
 
     private void clear() {

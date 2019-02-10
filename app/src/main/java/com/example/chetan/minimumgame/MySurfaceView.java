@@ -196,8 +196,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         Top_Center_Player.add(DeatlDeck.Deal(true));
         Top_Center_Player.add(DeatlDeck.Deal(true));
         DiscardedDeck.add(DeatlDeck.Deal(true));
-        MainPlayer.sort();
-        Top_Center_Player.sort();
+        //MainPlayer.sort();
+      //  Top_Center_Player.sort();
 
 
       /*  for(int i =0; i<no_of_players;i++)
@@ -255,11 +255,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         lasttouched_Y = e.getY();
 
         // Code for long touch and single touch swap
-        if(((lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())))==false &&isLongTouched) // Main Player Deck, card  is touched
+        if(((lasttouched_X >= DiscardedDeck_CurrentX && lasttouched_X < (DiscardedDeck_CurrentX + DiscardedDeck.getCard().getImage().getWidth())))==false
+                &&isLongTouched) // Main Player Deck, card  is touched
         {
        //     Log.d(TAG,"Inside Long Touch Add Card condition");
             addTouchedCardToLongTouched(e);
         }
+
         else if (isLongTouched==false && touchedcard==null)
         {
             Log.d(TAG,"Inside Single Touch Card Condition");
@@ -273,8 +275,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         {
             if(touchedcard!=null)       // to replace with single card
             {
-                Log.d(TAG,"Inside Single Touch Card Swap Conditon ");
-                replacedcard = DiscardedDeck.Deal(true);
+                Log.d(TAG,"Inside Single Touch Card Discarded Deck Swap Conditon ");
+               /* replacedcard = DiscardedDeck.Deal(true);
                 Card swapcard = MainPlayer.swapCard(replacedcard, cardindex);
              //   Log.d(TAG,String.valueOf(swapcard.getCurrent_X()));
              //   Log.d(TAG,String.valueOf(swapcard.getCurrent_Y()));
@@ -283,9 +285,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             //    Log.d(TAG,String.valueOf(swapcard.getCurrent_X()));
             //    Log.d(TAG,String.valueOf(swapcard.getCurrent_Y()));
                 DiscardedDeck.add(swapcard);
+                */
+               swapFromDiscardedDeck(MainPlayer,cardindex);
                 touchedcard = null;
                 cardindex = -1;
-
             }
             else if(isLongTouched)
             {
@@ -293,16 +296,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 int i=0;
                 Card Discarddeckcard;
                 Discarddeckcard=DiscardedDeck.Deal(true);
-               while(i<=size)
-               {
+               while(i<=size)           // removal of card in sort ascending order
+                   {
                    Card removecard=MainPlayer.removeCard(tempListindex.get(i));
                    //  tempLongtouchList.remove(i);
                     removecard.setCurrent_X(DiscardedDeck_CurrentX);
                     removecard.setCurrent_Y(DiscardedDeck_CurrentY);
                     DiscardedDeck.add(removecard);
                     i++;
-
-               }
+                   }
                tempListindex.clear();
               // tempLongtouchList.clear();
                MainPlayer.add(Discarddeckcard);
@@ -310,17 +312,63 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             }
             current_player++;
         }
+        else if(lasttouched_X>=DealtDeck_CurrentX && lasttouched_Y<=(DealtDeck_CurrentX + DeatlDeck.getCard().getImage().getWidth())) // if touched card is Dealt Deck
+        {
+            Log.d(TAG,"Inside Single Touch Dealt Deck Swap condtion");
+            if(touchedcard!=null)
+            {
+               swapFromDealtDeck(MainPlayer,cardindex);
+            /*    Log.d(TAG,"Inside Single Touch Dealt Deck Swap condtion");
+                replacedcard=DeatlDeck.Deal(true);
+                Card swapcard= MainPlayer.swapCard(replacedcard,cardindex);
+                swapcard.setCurrent_X(DealtDeck_CurrentX);
+                swapcard.setCurrent_Y(DealtDeck_CurrentY);
+                DeatlDeck.add(swapcard);
+                touchedcard=null;
+                cardindex=-1;
+                */
+            touchedcard=null;
+            cardindex=-1;
+            }
+            else if(isLongTouched)
+            {   Log.d(TAG,"Inside Dealt Deck long touch swap");
+                int size=tempListindex.size()-1;
+                int i=0;
+                Card Discarddeckcard;
+                Discarddeckcard=DeatlDeck.Deal(true);
+                while(i<=size)           // removal of card in sort ascending order
+                {
+                    Card removecard=MainPlayer.removeCard(tempListindex.get(i));
+                    //  tempLongtouchList.remove(i);
+                    removecard.setCurrent_X(DiscardedDeck_CurrentX);
+                    removecard.setCurrent_Y(DiscardedDeck_CurrentY);
+                    DiscardedDeck.add(removecard);
+                    i++;
+                }
+                tempListindex.clear();
+                // tempLongtouchList.clear();
+                MainPlayer.add(Discarddeckcard);
+                isLongTouched=false;
+            }
+            current_player++;
+        }
 
 
     }
 
+    /**
+     *
+     * @param lasttouched_x Xcordinates of touched card
+     * @param lasttouched_y Y cordinates to touched card
+     * @return if touched belongs to a card, then index of card else -1
+     */
     private int cardTouched(int lasttouched_x, int lasttouched_y) {
         int index=0;
         Card localcard=null;
         while (index<MainPlayer.Count())
         {
             localcard=MainPlayer.getCard(index);
-            if(lasttouched_x>= localcard.getCurrent_X() && lasttouched_x<(localcard.getCurrent_X()+localcard.getImage().getWidth()) && (lasttouched_y>=localcard.getCurrent_Y() &&lasttouched_y <=(localcard.getCurrent_Y()+localcard.getImage().getWidth())))
+            if(lasttouched_x>= localcard.getCurrent_X() && lasttouched_x<(localcard.getCurrent_X()+localcard.getImage().getWidth()))// && (lasttouched_y>=localcard.getCurrent_Y() &&lasttouched_y <=(localcard.getCurrent_Y()+localcard.getImage().getWidth())))
             {
                 return index;
             }
@@ -329,9 +377,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         return -1;
     }
 
+    /**
+     * Add index of touch card in temporary array
+     * and later use that array for multiple cards
+     * removal
+     * @param event
+     */
     public void addTouchedCardToLongTouched(MotionEvent event)
     {
-
+        Log.d(TAG,"Inside long touch add card method");
         float lasttouched_X, lasttouched_Y;
         int index=-1;
         lasttouched_X=event.getX();
@@ -358,9 +412,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         drawDiscardedDeck(canvas);
         setMainPlayer();
         DrawMainPlayerDeck(canvas);
-        SetTopCenterPlayerDeck();
-        DrawTopCenterPlayerDeck(canvas);
-        startGame();
+     //   SetTopCenterPlayerDeck();
+     //   DrawTopCenterPlayerDeck(canvas);
+      //  startGame();
 
     }
 
@@ -373,7 +427,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
            parent.runOnUiThread(new Runnable() {
                @Override
                public void run() {
-                //   Toast.makeText(parent, "Your turn", 0).show();
+                  // Toast.makeText(parent, "Your turn", 0).show();
                }
            });
        }
@@ -420,16 +474,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private void swapFromDealtDeck(Deck playerdeck, int cardindex) {
         Log.d(TAG,"Inside swap from dealt deck");
         Card temp= DeatlDeck.Deal(true);
+        Card temp1= playerdeck.removeCard(cardindex);
+        playerdeck.add(temp);
+        DiscardedDeck.add(temp1);
+        Log.d(TAG,"Dealt Deck count" +DeatlDeck.Count() );
         if(DeatlDeck.Count()==0)
         {
             Log.d(TAG,"Dealt Deck empty refilling");
             DeatlDeck.refill(DiscardedDeck,DealtDeck_CurrentX,DealtDeck_CurrentY);
         }
-
-        Card temp1= playerdeck.removeCard(cardindex);
-        playerdeck.add(temp);
-        DiscardedDeck.add(temp1);
-        Log.d(TAG,"Dealt Deck count" +DeatlDeck.Count() );
 
     }
 
@@ -472,6 +525,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             int Down_Card_Gap_positive = 0;
             int Down_Card_Gap_negative = 0;
             MainPlayer.sort();
+          //  Log.d(TAG,"Main Player Deck size"+MainPlayer.Count());
             while (currentiteration < MainPlayer.Count()) {
                 localcard = MainPlayer.getCard(currentiteration);
                // localimage = DecodeSampleBitmapFromResource(getResources(), localcard.GetImageId(context), Card_Width, Card_Height);
