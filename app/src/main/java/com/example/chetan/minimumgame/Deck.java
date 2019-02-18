@@ -1,17 +1,12 @@
 package com.example.chetan.minimumgame;
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 public class Deck {
     private ArrayList<Card> deck= new ArrayList<>() ;
@@ -107,10 +102,10 @@ public class Deck {
         return removedcard;
     }
 
-    public Card removeCard(int index)
+    public Card removeCard(int index, boolean showcardface)
     {
         Card dealcards=deck.remove(index);
-        dealcards.setShowcardface(true);
+        dealcards.setShowcardface(showcardface);
         return dealcards;
 
     }
@@ -190,7 +185,7 @@ public class Deck {
         int i=0;
         while(count>=0)
         {
-            Card currentcard= DiscardedDeck.removeCard(count);
+            Card currentcard= DiscardedDeck.removeCard(count, false);
             currentcard.setCurrent_X(dealtDeck_CurrentX);
             currentcard.setCurrent_Y(dealtDeck_CurrentY);
             currentcard.setShowcardface(false);
@@ -198,6 +193,7 @@ public class Deck {
             count--;
         }
         shuffle();
+        DiscardedDeck.add(Deal(true));
     }
 
     private void clear() {
