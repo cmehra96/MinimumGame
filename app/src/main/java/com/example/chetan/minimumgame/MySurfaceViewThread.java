@@ -8,7 +8,7 @@ import android.util.Log;
 import android.graphics.Canvas;
 
 
-public class MySurfaceViewThread extends Thread{ //implements Choreographer.FrameCallback {
+public class MySurfaceViewThread extends Thread { //implements Choreographer.FrameCallback {
     private static final String TAG = MySurfaceViewThread.class.getSimpleName();  // To get name of class in Logging
     private MySurfaceView mySurfaceView;
     private SurfaceHolder mySurfaceHolder;
@@ -21,89 +21,80 @@ public class MySurfaceViewThread extends Thread{ //implements Choreographer.Fram
      */
     private static final int MAX_FRAME_TIME = (int) (1000.0 / 60.0);
 
-    public MySurfaceViewThread(SurfaceHolder paramSurfaceHolder, MySurfaceView paramSurfaceView)
-    {
-        mySurfaceHolder=paramSurfaceHolder;
-        mySurfaceView=paramSurfaceView;
+    public MySurfaceViewThread(SurfaceHolder paramSurfaceHolder, MySurfaceView paramSurfaceView) {
+        mySurfaceHolder = paramSurfaceHolder;
+        mySurfaceView = paramSurfaceView;
     }
 
-    public void setRunning(boolean run){
-        running=run;
+    public void setRunning(boolean run) {
+        running = run;
 
     }
 
-    public SurfaceHolder getMySurfaceHolder()
-    {
+    public SurfaceHolder getMySurfaceHolder() {
         return mySurfaceHolder;
     }
 
-/*
-    @Override
-    public void run() {
-        Log.d(TAG,"Inside run method");
-        Looper.prepare();
-        myChoreographer=Choreographer.getInstance();
-        myChoreographer.postFrameCallbackDelayed(this,0);
-        myLooper=Looper.myLooper();
-        Looper.loop();
-        myChoreographer=null;
-        Log.d(TAG,"Exiting rendering");
-
-    }
-
-    @Override
-    public void doFrame(long l) {
-        Log.d(TAG,"imside do frame method");
-        Canvas c = null;
-        try {
-            c = mySurfaceHolder.lockCanvas();
-            mySurfaceView.render(c);
-        } catch (Exception e) {
-            Log.e("Thread Class run method", "exception", e);
-        } finally {
-            if (c != null) {
-                mySurfaceHolder.unlockCanvasAndPost(c);
-            }
-
+    /*
+        @Override
+        public void run() {
+            Log.d(TAG,"Inside run method");
+            Looper.prepare();
+            myChoreographer=Choreographer.getInstance();
+            myChoreographer.postFrameCallbackDelayed(this,0);
+            myLooper=Looper.myLooper();
+            Looper.loop();
+            myChoreographer=null;
+            Log.d(TAG,"Exiting rendering");
 
         }
-    }
 
-    public void stopThread()
-    {
-        myLooper.quit();
-    }
-    */
-     @SuppressLint("WrongCall")
+        @Override
+        public void doFrame(long l) {
+            Log.d(TAG,"imside do frame method");
+            Canvas c = null;
+            try {
+                c = mySurfaceHolder.lockCanvas();
+                mySurfaceView.render(c);
+            } catch (Exception e) {
+                Log.e("Thread Class run method", "exception", e);
+            } finally {
+                if (c != null) {
+                    mySurfaceHolder.unlockCanvasAndPost(c);
+                }
+
+
+            }
+        }
+
+        public void stopThread()
+        {
+            myLooper.quit();
+        }
+        */
+    @SuppressLint("WrongCall")
 
     @Override
     public void run() {
         Canvas c;
-        long frameStarttime= 0;
+        long frameStarttime = 0;
         long frameTime;
-        while(running)
-        {
-            if(mySurfaceHolder==null)
-            {
+        while (running) {
+            if (mySurfaceHolder == null) {
                 return;   // To fix Surface not found error;
             }
-            c=null;
-            try{
-                frameStarttime=System.nanoTime();
-                c= mySurfaceHolder.lockCanvas();
+            c = null;
+            try {
+                frameStarttime = System.nanoTime();
+                c = mySurfaceHolder.lockCanvas();
                 Thread.sleep(100);
                 synchronized (mySurfaceHolder) {
-                   mySurfaceView.render(c);
+                    mySurfaceView.render(c);
                 }
-            }
-            catch(Exception e)
-            {
-               // Log.e("Thread Class run method","exception",e);
-            }
-
-            finally {
-                if (c!=null)
-                {
+            } catch (Exception e) {
+                // Log.e("Thread Class run method","exception",e);
+            } finally {
+                if (c != null) {
                     mySurfaceHolder.unlockCanvasAndPost(c);
                 }
             }
@@ -111,7 +102,7 @@ public class MySurfaceViewThread extends Thread{ //implements Choreographer.Fram
             // calculate the time required to draw the frame in ms
             frameTime = (System.nanoTime() - frameStarttime) / 1000000;
 
-            if (frameTime < MAX_FRAME_TIME){
+            if (frameTime < MAX_FRAME_TIME) {
                 try {
                     Thread.sleep(MAX_FRAME_TIME - frameTime);
                 } catch (InterruptedException e) {
@@ -122,7 +113,6 @@ public class MySurfaceViewThread extends Thread{ //implements Choreographer.Fram
         }
 
     }
-
 
 
 }

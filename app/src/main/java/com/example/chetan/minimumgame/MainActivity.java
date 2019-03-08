@@ -11,19 +11,17 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       try {
+        try {
 
-           setContentView(R.layout.activity_main);
-          MySurfaceView surfaceView;
-          surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
-          surfaceView.setActivity(this);
+            setContentView(R.layout.activity_main);
+            MySurfaceView surfaceView;
+            surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
+            surfaceView.setActivity(this);
 
 
-       }
-       catch (Exception e)
-       {
-           e.printStackTrace();
-       }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }

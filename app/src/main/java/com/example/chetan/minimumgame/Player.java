@@ -3,34 +3,30 @@ package com.example.chetan.minimumgame;
 import java.util.ArrayList;
 
 public class Player {
-    protected Deck mydeck= new Deck();
+    protected Deck mydeck = new Deck();
     protected String name;
     protected int Score;
     protected boolean issafed;
 
-    public Player()
-    {
+    public Player() {
 
-        Score=0;
-        name="";
-        issafed=false;
+        Score = 0;
+        name = "";
+        issafed = false;
     }
 
-    public Player(String name, int score,boolean issafed)
-    {
-        this.name=name;
-        Score=score;
-        this.issafed=issafed;
+    public Player(String name, int score, boolean issafed) {
+        this.name = name;
+        Score = score;
+        this.issafed = issafed;
     }
 
-    public Player(String name)
-    {
-        this.name=name;
-        Score=0;
-        issafed=false;
+    public Player(String name) {
+        this.name = name;
+        Score = 0;
+        issafed = false;
 
     }
-
 
 
     public String getName() {
@@ -43,6 +39,15 @@ public class Player {
 
     public int getScore() {
         return Score;
+    }
+
+    protected void evaluatescore() {
+        int score=0;
+        for (Card c:mydeck.getDeck()
+             ) {
+            score+=c.cardRank();
+        }
+        
     }
 
     public void setScore(int score) {
@@ -65,18 +70,16 @@ public class Player {
         this.mydeck = mydeck;
     }
 
-    public void AddScore(int score)
-    {
-        Score+= score;
+    public void AddScore(int score) {
+        Score += score;
     }
 
-    public void addToHand(Card card)
-    {
+    public void addToHand(Card card) {
         mydeck.add(card);
-        mydeck.sort();
     }
-    public int decksize()
-    {
+
+    public int decksize() {
         return mydeck.Count();
     }
+
 }
