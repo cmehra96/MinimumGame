@@ -22,7 +22,7 @@ public class Deck {
      */
     public void add(Card card) {
         deck.add(card);
-        sort();
+        //sort();
     }
 
     /**
@@ -64,10 +64,8 @@ public class Deck {
         return dealcards;
 
     }
-    /**
-     * Method to remove a single card from deck
-     * @return Removed card from the deck.
-     */
+
+
     /**
      * Method to remove a top card from deck
      *

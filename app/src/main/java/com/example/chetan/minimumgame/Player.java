@@ -42,12 +42,12 @@ public class Player {
     }
 
     protected void evaluatescore() {
-        int score=0;
-        for (Card c:mydeck.getDeck()
-             ) {
-            score+=c.cardRank();
+        int score = 0;
+        for (Card c : mydeck.getDeck()
+                ) {
+            score += c.cardRank();
         }
-        
+
     }
 
     public void setScore(int score) {
@@ -76,10 +76,31 @@ public class Player {
 
     public void addToHand(Card card) {
         mydeck.add(card);
+
     }
 
     public int decksize() {
         return mydeck.Count();
     }
 
+    /**
+     * @param index
+     * @return Element at index value
+     */
+
+    public Card getCard(int index) {
+        return mydeck.getCard(index);
+    }
+
+    public Card removeCard(int index, boolean showcardface) {
+        return mydeck.removeCard(index, showcardface);
+    }
+
+    public void sort() {
+        mydeck.sort();
+    }
+
+    public void setCurrentCard(Card localcard, int currentiteration) {
+        mydeck.setCurrentCard(localcard, currentiteration);
+    }
 }
