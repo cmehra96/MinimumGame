@@ -24,6 +24,13 @@ import java.util.ArrayList;
 public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = MySurfaceView.class.getSimpleName();  // To get name of class in Logging
+    final Handler longpressedhandler = new Handler();
+    private final int MIN_CLICK_DURATION = 1000;
+    private final int no_of_players = 2;
+    private final int no_of_CPU_players = no_of_players - 1;
+    MainActivity parent;
+    MyButton callminimum;
+    DiscardedDeck discardedDeck;
     private Context context;
     private DisplayMetrics metrics;
     private MySurfaceViewThread thread;
@@ -39,30 +46,23 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     //  private Deck MainPlayer;
     private Deck DeatlDeck;
     //private Deck DiscardedDeck;
-    private Deck Top_Center_Player;
+    // private Deck Top_Center_Player;
     private Bitmap BlueBackCard;
     private int DealtDeck_CurrentX;
     private int DealtDeck_CurrentY;
     private int DiscardedDeck_CurrentX;
     private int DiscardedDeck_CurrentY;
     private boolean isLongTouched = false;
-    final Handler longpressedhandler = new Handler();
     private Card touchedcard = null;
     private int cardindex = -1;
     private Card replacedcard = null;
     private GestureDetector gestureDetector;
     private long startclicktime;
-    private final int MIN_CLICK_DURATION = 1000;
     private ArrayList<Card> tempLongtouchList = new ArrayList<>();
     private ArrayList<Integer> tempListindex = new ArrayList<>();
     private Player player;
     private ArrayList<AIPlayer> AIPlayerlist;
-    private final int no_of_players = 2;
-    private final int no_of_CPU_players = no_of_players - 1;
     private int current_player;
-    MainActivity parent;
-    MyButton callminimum;
-    DiscardedDeck discardedDeck;
 
     public MySurfaceView(Context context) {
         super(context);
@@ -144,7 +144,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         //MainPlayer = new Deck();
         DeatlDeck = new Deck();
         //DiscardedDeck = new Deck();
-        Top_Center_Player = new Deck();
+        //Top_Center_Player = new Deck();
         DealtDeck_CurrentX = Screen_Center_X - Card_Width;
         DealtDeck_CurrentY = Screen_Center_Y - Card_Height / 2;
         DiscardedDeck_CurrentX = Screen_Center_X + Card_Width;
@@ -183,9 +183,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         player.addToHand(DeatlDeck.Deal(true));
         player.addToHand(DeatlDeck.Deal(true));
         player.addToHand(DeatlDeck.Deal(true));
-        Top_Center_Player.add(DeatlDeck.Deal(false));
-        Top_Center_Player.add(DeatlDeck.Deal(false));
-        Top_Center_Player.add(DeatlDeck.Deal(false));
+        for (int i = 0; i < no_of_CPU_players; i++) {
+            AIPlayerlist.get(i).addToHand(DeatlDeck.Deal(false));
+            AIPlayerlist.get(i).addToHand(DeatlDeck.Deal(false));
+            AIPlayerlist.get(i).addToHand(DeatlDeck.Deal(false));
+        }
         discardedDeck.add(DeatlDeck.Deal(true));
         //MainPlayer.sort();
         //  Top_Center_Player.sort();
@@ -387,6 +389,17 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
      */
     public void showdown() {
         Log.d(TAG, "Inside showdown method");
+        int i = 0;
+        while (i < no_of_CPU_players) {
+            AIPlayerlist.get(i).showcards();
+            i++;
+
+        }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -424,7 +437,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private void startGame(Canvas canvas) {
         Log.d(TAG, "Inside Start Game method");
         if (current_player == no_of_players)
-            current_player = 1;
+            current_player = 0;
 
         if (current_player == 0) {
             callminimum.draw(canvas);
@@ -435,10 +448,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
             });
         } else {
-            if (current_player == 1) {
+            /*if (current_player == 1) {
                 pickBestCard(Top_Center_Player, discardedDeck.getTopCard());
                 current_player++;
             }
+            */
+            pickBestCard(AIPlayerlist.get((current_player - 1)).getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
+            current_player++;
         }
 
 
@@ -578,13 +594,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         int Down_Card_Gap_Postive = 0;
         int Down_Card_Gap_negative = 0;
         int Card_Gap = Screen_Width / 10;
-        int cards = Top_Center_Player.Count();
+        int cards = AIPlayerlist.get(0).decksize();
         while (currentiteration < cards) {
-            localcard = Top_Center_Player.getCard(currentiteration);
+            localcard = AIPlayerlist.get(0).getCard(currentiteration);
             //localimage=DecodeSampleBitmapFromResource(getResources(),localcard.GetImageId(context),Card_Width,Card_Height);
             //  localcard.setImage(localimage);
             localcard.setCurrent_Y(0);      //Y-Axis =0
-            Top_Center_Player.setCurrentCard(localcard, currentiteration);
+            AIPlayerlist.get(0).setCurrentCard(localcard, currentiteration);
             currentiteration++;
             if (Down_Card_Gap >= 0) {
                 Down_Card_Gap_Postive = Down_Card_Gap;
@@ -601,9 +617,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private void DrawTopCenterPlayerDeck(Canvas canvas) {
         Card localcard;
         int currentiteration = 0;
-        int cardcount = Top_Center_Player.Count();
+        int cardcount = AIPlayerlist.get(0).decksize();
         while (currentiteration < cardcount) {
-            localcard = Top_Center_Player.getCard(currentiteration);
+            localcard = AIPlayerlist.get(0).getCard(currentiteration);
             canvas.drawBitmap(localcard.getImage(context, Card_Width, Card_Height), localcard.getCurrent_X(), localcard.getCurrent_Y(), null);
             currentiteration++;
         }

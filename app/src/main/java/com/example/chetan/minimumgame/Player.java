@@ -41,6 +41,10 @@ public class Player {
         return Score;
     }
 
+    public void setScore(int score) {
+        Score = score;
+    }
+
     protected void evaluatescore() {
         int score = 0;
         for (Card c : mydeck.getDeck()
@@ -48,10 +52,6 @@ public class Player {
             score += c.cardRank();
         }
 
-    }
-
-    public void setScore(int score) {
-        Score = score;
     }
 
     public boolean isIssafed() {
@@ -103,4 +103,5 @@ public class Player {
     public void setCurrentCard(Card localcard, int currentiteration) {
         mydeck.setCurrentCard(localcard, currentiteration);
     }
+
 }

@@ -10,12 +10,12 @@ import android.graphics.RectF;
  * on the UI
  */
 public class MyButton {
+    float rotationangle;
     private Matrix btn_matrix = new Matrix();
     private RectF btn_rect;
     private float width;
     private float height;
     private Bitmap btn_image;
-    float rotationangle;
 
     public MyButton(int starting_X, int starting_Y, float width, float height, Bitmap btn_image) {
         this.width = width;

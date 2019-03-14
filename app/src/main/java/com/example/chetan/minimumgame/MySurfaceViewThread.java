@@ -10,16 +10,15 @@ import android.graphics.Canvas;
 
 public class MySurfaceViewThread extends Thread { //implements Choreographer.FrameCallback {
     private static final String TAG = MySurfaceViewThread.class.getSimpleName();  // To get name of class in Logging
-    private MySurfaceView mySurfaceView;
-    private SurfaceHolder mySurfaceHolder;
-    boolean running;
-    private Choreographer myChoreographer = null;
-    private Looper myLooper = null;
-
     /**
      * Time per frame for 60 FPS
      */
     private static final int MAX_FRAME_TIME = (int) (1000.0 / 60.0);
+    boolean running;
+    private MySurfaceView mySurfaceView;
+    private SurfaceHolder mySurfaceHolder;
+    private Choreographer myChoreographer = null;
+    private Looper myLooper = null;
 
     public MySurfaceViewThread(SurfaceHolder paramSurfaceHolder, MySurfaceView paramSurfaceView) {
         mySurfaceHolder = paramSurfaceHolder;

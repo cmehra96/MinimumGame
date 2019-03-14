@@ -33,6 +33,9 @@ public class Card implements Comparable {
 
     }
 
+    public static int GetBlueBackCardImageId(Context currentcontext) {
+        return currentcontext.getResources().getIdentifier("blueback", "drawable", currentcontext.getPackageName());
+    }
 
     public int GetImageId(Context currentcontext) {
         int cardimageid;
@@ -48,13 +51,13 @@ public class Card implements Comparable {
         return cardimageid;
     }
 
-    public static int GetBlueBackCardImageId(Context currentcontext) {
-        return currentcontext.getResources().getIdentifier("blueback", "drawable", currentcontext.getPackageName());
-    }
-
     public Bitmap getImage() {
 
         return Image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.Image = image;
     }
 
     public Bitmap getImage(Context currentcontext, int card_width, int card_height) {
@@ -72,8 +75,16 @@ public class Card implements Comparable {
         return current_X;
     }
 
+    public void setCurrent_X(int current_X) {
+        this.current_X = current_X;
+    }
+
     public int getCurrent_Y() {
         return current_Y;
+    }
+
+    public void setCurrent_Y(int current_Y) {
+        this.current_Y = current_Y;
     }
 
     public boolean getShowCardFaced() {
@@ -82,18 +93,6 @@ public class Card implements Comparable {
 
     public void setShowcardface(boolean showcardface) {
         this.showcardface = showcardface;
-    }
-
-    public void setImage(Bitmap image) {
-        this.Image = image;
-    }
-
-    public void setCurrent_X(int current_X) {
-        this.current_X = current_X;
-    }
-
-    public void setCurrent_Y(int current_Y) {
-        this.current_Y = current_Y;
     }
 
     public int cardRank() {
