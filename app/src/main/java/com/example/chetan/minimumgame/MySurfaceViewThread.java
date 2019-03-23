@@ -90,6 +90,8 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
                 synchronized (mySurfaceHolder) {
                     mySurfaceView.render(c);
                 }
+
+                //  mySurfaceView.render(c);
             } catch (Exception e) {
                 // Log.e("Thread Class run method","exception",e);
             } finally {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 
 public class Card implements Comparable {
     private int current_X;
@@ -33,24 +34,25 @@ public class Card implements Comparable {
 
     }
 
-    public static int GetBlueBackCardImageId(Context currentcontext) {
-        return currentcontext.getResources().getIdentifier("blueback", "drawable", currentcontext.getPackageName());
-    }
+    /* public static int GetBlueBackCardImageId(Context currentcontext) {
+         return currentcontext.getResources().getIdentifier("blueback", "drawable", currentcontext.getPackageName());
+     }
 
-    public int GetImageId(Context currentcontext) {
-        int cardimageid;
-        int imagenumber;
-        String imagename;
-        if (showcardface == false) {
-            imagename = "blueback";
-        } else {
-            imagename = suit.getName() + CardValue.getImageName();
 
-        }
-        cardimageid = currentcontext.getResources().getIdentifier(imagename, "drawable", currentcontext.getPackageName());
-        return cardimageid;
-    }
+     public int GetImageId(Context currentcontext) {
+         int cardimageid;
+         int imagenumber;
+         String imagename;
+         if (showcardface == false) {
+             imagename = "blueback";
+         } else {
+             imagename = suit.getName() + CardValue.getImageName();
 
+         }
+         cardimageid = currentcontext.getResources().getIdentifier(imagename, "drawable", currentcontext.getPackageName());
+         return cardimageid;
+     }
+ */
     public Bitmap getImage() {
 
         return Image;
@@ -62,13 +64,14 @@ public class Card implements Comparable {
 
     public Bitmap getImage(Context currentcontext, int card_width, int card_height) {
 
-        getImagefromFile(currentcontext, card_width, card_height);
-
+        //getImagefromFile(currentcontext, card_width, card_height);
+        new BitmapLoader(currentcontext, card_width, card_height).execute();
         return this.Image;
     }
 
     private void getImagefromFile(Context currentcontext, int card_width, int card_height) {
-        Image = DecodeSampleBitmapFromResource(currentcontext.getResources(), GetImageId(currentcontext), card_width, card_height);
+        //Image = DecodeSampleBitmapFromResource(currentcontext.getResources(), GetImageId(currentcontext), card_width, card_height);
+
     }
 
     public int getCurrent_X() {
@@ -151,6 +154,84 @@ public class Card implements Comparable {
         }
 
         return inSampleSize;
+    }
+
+    private class BitmapLoader extends AsyncTask<Object, Void, Bitmap> {
+        Context context;
+        int card_width;
+        int card_height;
+
+        public BitmapLoader(Context context, int card_width, int card_height) {
+            this.context = context;
+            this.card_width = card_width;
+            this.card_height = card_height;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Object... objects) {
+            try {
+
+                return getBitmap();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        private Bitmap getBitmap() throws Exception {
+
+            Image = DecodeSampleBitmapFromResource(context.getResources(), GetImageId(context), card_width, card_height);
+            return Image;
+        }
+
+
+        private Bitmap DecodeSampleBitmapFromResource(Resources res, int resId,
+                                                      int reqWidth, int reqHeight) {
+
+            // First decode with inJustDecodeBounds=true to check dimensions
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(res, resId, options);
+
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            return BitmapFactory.decodeResource(res, resId, options);
+        }
+
+        private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            // Raw height and width of image
+            final int height = options.outHeight;
+            final int width = options.outWidth;
+            int inSampleSize = 1;
+            if (height > reqHeight || width > reqWidth) {
+
+
+                int heightratio = (int) Math.round((double) height / reqHeight);
+                int widthratio = (int) Math.round((double) width / reqWidth);
+                inSampleSize = heightratio < widthratio ? widthratio : heightratio;
+            }
+
+            return inSampleSize;
+        }
+
+        public int GetImageId(Context currentcontext) {
+            int cardimageid;
+            int imagenumber;
+            String imagename;
+            if (showcardface == false) {
+                imagename = "blueback";
+            } else {
+                imagename = suit.getName() + CardValue.getImageName();
+
+            }
+            cardimageid = currentcontext.getResources().getIdentifier(imagename, "drawable", currentcontext.getPackageName());
+            return cardimageid;
+        }
     }
 
 }
