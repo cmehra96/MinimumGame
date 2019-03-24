@@ -34,25 +34,7 @@ public class Card implements Comparable {
 
     }
 
-    /* public static int GetBlueBackCardImageId(Context currentcontext) {
-         return currentcontext.getResources().getIdentifier("blueback", "drawable", currentcontext.getPackageName());
-     }
 
-
-     public int GetImageId(Context currentcontext) {
-         int cardimageid;
-         int imagenumber;
-         String imagename;
-         if (showcardface == false) {
-             imagename = "blueback";
-         } else {
-             imagename = suit.getName() + CardValue.getImageName();
-
-         }
-         cardimageid = currentcontext.getResources().getIdentifier(imagename, "drawable", currentcontext.getPackageName());
-         return cardimageid;
-     }
- */
     public Bitmap getImage() {
 
         return Image;
@@ -64,14 +46,8 @@ public class Card implements Comparable {
 
     public Bitmap getImage(Context currentcontext, int card_width, int card_height) {
 
-        //getImagefromFile(currentcontext, card_width, card_height);
         new BitmapLoader(currentcontext, card_width, card_height).execute();
         return this.Image;
-    }
-
-    private void getImagefromFile(Context currentcontext, int card_width, int card_height) {
-        //Image = DecodeSampleBitmapFromResource(currentcontext.getResources(), GetImageId(currentcontext), card_width, card_height);
-
     }
 
     public int getCurrent_X() {
@@ -88,10 +64,6 @@ public class Card implements Comparable {
 
     public void setCurrent_Y(int current_Y) {
         this.current_Y = current_Y;
-    }
-
-    public boolean getShowCardFaced() {
-        return showcardface;
     }
 
     public void setShowcardface(boolean showcardface) {
@@ -121,39 +93,6 @@ public class Card implements Comparable {
     @Override
     public int compareTo(Object o) {
         return ((Integer) hashCode()).compareTo(o.hashCode());
-    }
-
-
-    private Bitmap DecodeSampleBitmapFromResource(Resources res, int resId,
-                                                  int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-
-
-            int heightratio = (int) Math.round((double) height / reqHeight);
-            int widthratio = (int) Math.round((double) width / reqWidth);
-            inSampleSize = heightratio < widthratio ? widthratio : heightratio;
-        }
-
-        return inSampleSize;
     }
 
     private class BitmapLoader extends AsyncTask<Object, Void, Bitmap> {

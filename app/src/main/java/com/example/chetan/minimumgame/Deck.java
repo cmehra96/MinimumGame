@@ -164,20 +164,6 @@ public class Deck {
      * @param dealtDeck_CurrentY update currentY of the card
      */
     public void refill(DiscardedDeck DiscardedDeck, int dealtDeck_CurrentX, int dealtDeck_CurrentY) {
-       /* for (Card currentcard: DiscardedDeck.getDeck()) {
-            {
-                currentcard.setCurrent_X(dealtDeck_CurrentX);
-                currentcard.setCurrent_Y(dealtDeck_CurrentY);
-                currentcard.setShowcardface(false);
-                deck.add(currentcard);
-
-            }
-            shuffle();
-
-             //DiscardedDeck.clear();
-           //DiscardedDeck.add(Deal(true));
-        }
-        */
         int count = DiscardedDeck.Count() - 1;
         int i = 0;
         while (count >= 0) {
