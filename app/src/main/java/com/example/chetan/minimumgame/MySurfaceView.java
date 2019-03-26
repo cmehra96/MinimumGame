@@ -1,12 +1,14 @@
 package com.example.chetan.minimumgame;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 //import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -17,6 +19,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import android.os.Handler;
+
+import com.example.chetan.minimumgame.ScoreCard.ScoreCard;
 
 import java.util.ArrayList;
 
@@ -339,11 +343,21 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     public void showdown() {
         Log.d(TAG, "Inside showdown method");
         int i = 0;
+        ArrayList<String> playernames = new ArrayList<String>();
+        ArrayList<Integer> playerscore = new ArrayList<Integer>();
+        playerscore.add(player.getScore());
+        playernames.add(player.getName());
         while (i < no_of_CPU_players) {
             AIPlayerlist.get(i).showcards();
+            playerscore.add(AIPlayerlist.get(i).getScore());
+            playernames.add(AIPlayerlist.get(i).getName());
             i++;
 
         }
+        Intent intent = new Intent(this.parent, ScoreCard.class);
+        intent.putStringArrayListExtra("playersname", playernames);
+        intent.putIntegerArrayListExtra("playersscore", playerscore);
+        context.startActivity(intent);
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {

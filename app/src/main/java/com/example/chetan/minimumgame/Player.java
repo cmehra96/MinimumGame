@@ -38,6 +38,7 @@ public class Player {
     }
 
     public int getScore() {
+        evaluatescore();
         return Score;
     }
 
@@ -51,7 +52,7 @@ public class Player {
                 ) {
             score += c.cardRank();
         }
-
+        AddScore(score);
     }
 
     public boolean isIssafed() {
