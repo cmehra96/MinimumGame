@@ -14,18 +14,16 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ScrollingActivity"
-            android:label="@string/title_activity_scrolling" />
-        <activity android:name=".Result" />
-        <activity android:name=".ScoreCard.ScoreCard"></activity>
+        <activity android:name=".ScoreCard.ScoreCard" android:label="@string/activity_scorecard" android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

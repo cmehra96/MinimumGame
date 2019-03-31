@@ -8,11 +8,13 @@ import android.graphics.Canvas;
 //import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Parcelable;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
+import android.util.SparseArray;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -21,6 +23,7 @@ import android.view.SurfaceView;
 import android.os.Handler;
 
 import com.example.chetan.minimumgame.ScoreCard.ScoreCard;
+import com.example.chetan.minimumgame.ScoreCard.ScoreCardPopup;
 
 import java.util.ArrayList;
 
@@ -151,8 +154,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         DiscardedDeck_CurrentY = Screen_Center_Y - Card_Height / 2;
         AIPlayerlist = new ArrayList<AIPlayer>(no_of_CPU_players);
         current_player = 0;
-        discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
-        callminimum = new MyButton(Screen_Width, Screen_Height, 100, 100, (BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
+        callminimum = new MyButton(Screen_Width, Screen_Height, Screen_Width/9, Screen_Height/5,(BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
+                discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
         initializePlayers();
     }
 
@@ -191,6 +194,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         discardedDeck.add(DeatlDeck.Deal(true));
     }
 
+    /**
+     * @param event
+     * @return
+     */
     // @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -337,6 +344,21 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     /**
+     * Called by {@link #saveHierarchyState(SparseArray)} to store the state for
+     * this view and its children. May be overridden to modify how freezing happens to a
+     * view's children; for example, some views may want to not store state for their children.
+     *
+     * @param container The SparseArray in which to save the view's state.
+     * @see #dispatchRestoreInstanceState(SparseArray)
+     * @see #saveHierarchyState(SparseArray)
+     * @see #onSaveInstanceState()
+     */
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        super.dispatchSaveInstanceState(container);
+    }
+
+    /**
      * Program to show cards of all players
      * when a person will call minimum.
      */
@@ -354,10 +376,16 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             i++;
 
         }
-        Intent intent = new Intent(this.parent, ScoreCard.class);
+        /* Score Card from Activity class
+        Intent intent = new Intent(this.context, ScoreCard.class);
         intent.putStringArrayListExtra("playersname", playernames);
         intent.putIntegerArrayListExtra("playersscore", playerscore);
         context.startActivity(intent);
+        */
+
+        // Score Card from pop up
+        ScoreCardPopup scoreCardPopup=new ScoreCardPopup(playernames,playerscore, context);
+        scoreCardPopup.showScoreCard();
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
