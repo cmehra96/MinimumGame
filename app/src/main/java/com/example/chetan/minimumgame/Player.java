@@ -97,8 +97,12 @@ public class Player {
         return mydeck.removeCard(index, showcardface);
     }
 
-    public void sort() {
-        mydeck.sort();
+    public void sortBySuit() {
+        mydeck.sortBySuit();
+    }
+
+    public void sortByRank() {
+        mydeck.sortByRank();
     }
 
     public void setCurrentCard(Card localcard, int currentiteration) {

@@ -90,6 +90,7 @@ public class Card implements Comparable {
         return suit.getValue() * 13 + CardValue.getRank();
     }
 
+
     @Override
     public int compareTo(Object o) {
         return ((Integer) hashCode()).compareTo(o.hashCode());

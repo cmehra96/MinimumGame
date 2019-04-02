@@ -1,6 +1,9 @@
 package com.example.chetan.minimumgame;
 
+
 public class AIPlayer extends Player {
+
+    boolean wonRound;
 
     public AIPlayer(String name) {
         this.name = name;
@@ -33,5 +36,16 @@ public class AIPlayer extends Player {
         }
     }
 
+    public enum Difficulty {
+        Easy,
+        Medium,
+        Hard
+    }
+
+    public enum PlayingStyle {
+
+        Agressive,
+        Safe
+    }
 
 }

@@ -115,10 +115,16 @@ public class Deck {
     }
 
     /**
-     * Method to sort deck in descending order.
+     * Method to sort deck based on suit
+     * in descending order.
+     * Order will be
+     * Diamond- Highest
+     * Hearts
+     * Spades
+     * Club- Lowest
      */
 
-    public void sort() {
+    public void sortBySuit() {
         Collections.sort(deck, new Comparator<Card>() {
             @Override
             public int compare(Card lhs, Card rhs) {
@@ -126,6 +132,18 @@ public class Deck {
             }
         });
     }
+
+    // compare Cards by their rank, for a descending order
+
+    public void sortByRank() {
+        Collections.sort(deck, new Comparator<Card>() {
+            @Override
+            public int compare(Card lhs, Card rhs) {
+                return rhs.cardRank() - lhs.cardRank();
+            }
+        });
+    }
+
 
     /**
      * To Compare each

@@ -45,10 +45,10 @@ public class ScoreCard extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-      //  Intent intent= new Intent(this, MainActivity.class);
-      //  startActivity(intent);
-     //   this.finish();
-      //  super.onBackPressed();
+        //  Intent intent= new Intent(this, MainActivity.class);
+        //  startActivity(intent);
+        //   this.finish();
+        //  super.onBackPressed();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to exit?")

@@ -15,24 +15,23 @@ public class ScoreCardPopup {
     private List<Items> itemsList = new ArrayList<Items>();
     private ListView listView;
     private CustomListAdapter adapter;
-    private ArrayList<String> playernames=new ArrayList<>();
-    private ArrayList<Integer> playerscore=new ArrayList<>();
+    private ArrayList<String> playernames = new ArrayList<>();
+    private ArrayList<Integer> playerscore = new ArrayList<>();
     Context context;
 
     public ScoreCardPopup(ArrayList<String> playernames, ArrayList<Integer> playerscore) {
-        this.playernames=playernames;
-        this.playerscore=playerscore;
+        this.playernames = playernames;
+        this.playerscore = playerscore;
     }
 
     public ScoreCardPopup(ArrayList<String> playernames, ArrayList<Integer> playerscore, Context context) {
-        this.playernames=playernames;
-        this.playerscore=playerscore;
-        this.context=context;
+        this.playernames = playernames;
+        this.playerscore = playerscore;
+        this.context = context;
     }
 
-    public void showScoreCard()
-    {
-        final Dialog dialog=new Dialog(context);
+    public void showScoreCard() {
+        final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.activity_score_card);
         //Initialize and create a new adapter with layout named list found in activity_main layout
         listView = (ListView) dialog.findViewById(R.id.list);
