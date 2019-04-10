@@ -26,6 +26,7 @@ import com.example.chetan.minimumgame.ScoreCard.ScoreCard;
 import com.example.chetan.minimumgame.ScoreCard.ScoreCardPopup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -154,8 +155,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         DiscardedDeck_CurrentY = Screen_Center_Y - Card_Height / 2;
         AIPlayerlist = new ArrayList<AIPlayer>(no_of_CPU_players);
         current_player = 0;
-        callminimum = new MyButton(Screen_Width, Screen_Height, Screen_Width/9, Screen_Height/5,(BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
-                discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
+        callminimum = new MyButton(Screen_Width, Screen_Height, Screen_Width / 9, Screen_Height / 5, (BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
+        discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
         initializePlayers();
     }
 
@@ -258,6 +259,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 touchedcard = null;
                 cardindex = -1;
             } else if (isLongTouched) {
+                Collections.sort(tempListindex, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
                 int size = tempListindex.size() - 1;
                 int i = 0;
                 Card Discarddeckcard;
@@ -282,7 +284,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 touchedcard = null;
                 cardindex = -1;
             } else if (isLongTouched) {
+                Collections.sort(tempListindex, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
+                if ((HandCombination.isStraight(player.getMydeck(), tempListindex)) == false) {
+                    Log.d(TAG, "Touched Cards are not straight set retry now");
+                    tempListindex.clear();
+                    return;
+                }
+
                 Log.d(TAG, "Inside Dealt Deck long touch swap");
+
                 int size = tempListindex.size() - 1;
                 int i = 0;
                 Card Discarddeckcard;
@@ -313,8 +323,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         Card localcard = null;
         while (index < player.decksize()) {
             localcard = player.getCard(index);
-            if (lasttouched_x >= localcard.getCurrent_X() && lasttouched_x < (localcard.getCurrent_X() + localcard.getImage().getWidth()))// && (lasttouched_y>=localcard.getCurrent_Y() &&lasttouched_y <=(localcard.getCurrent_Y()+localcard.getImage().getWidth())))
-            {
+            if (lasttouched_x >= localcard.getCurrent_X() && lasttouched_x < (localcard.getCurrent_X() + localcard.getImage().getWidth()) && (lasttouched_y >= localcard.getCurrent_Y() && lasttouched_y <= (localcard.getCurrent_Y() + localcard.getImage().getWidth()))) {
                 return index;
             }
             index++;
@@ -344,21 +353,6 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     }
 
     /**
-     * Called by {@link #saveHierarchyState(SparseArray)} to store the state for
-     * this view and its children. May be overridden to modify how freezing happens to a
-     * view's children; for example, some views may want to not store state for their children.
-     *
-     * @param container The SparseArray in which to save the view's state.
-     * @see #dispatchRestoreInstanceState(SparseArray)
-     * @see #saveHierarchyState(SparseArray)
-     * @see #onSaveInstanceState()
-     */
-    @Override
-    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
-        super.dispatchSaveInstanceState(container);
-    }
-
-    /**
      * Program to show cards of all players
      * when a person will call minimum.
      */
@@ -384,7 +378,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         */
 
         // Score Card from pop up
-        ScoreCardPopup scoreCardPopup=new ScoreCardPopup(playernames,playerscore, context);
+        ScoreCardPopup scoreCardPopup = new ScoreCardPopup(playernames, playerscore, context);
         scoreCardPopup.showScoreCard();
         try {
             Thread.sleep(200);
@@ -439,7 +433,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
             });
         } else {
-            pickBestCard(AIPlayerlist.get((current_player - 1)).getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
+            if (AIPlayerlist.get(current_player - 1).getMydeck().Count() < 3) {
+                pickBestCard(AIPlayerlist.get((current_player - 1)).getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
+            } else {
+
+            }
             current_player++;
         }
 
@@ -510,7 +508,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         int Down_Card_Gap = 0;
         int Down_Card_Gap_positive = 0;
         int Down_Card_Gap_negative = 0;
-        player.sort();
+        player.sortBySuit();
         //  Log.d(TAG,"Main Player Deck size"+MainPlayer.Count());
         while (currentiteration < player.decksize()) {
             localcard = player.getCard(currentiteration);

@@ -15,6 +15,14 @@ public class Deck {
 
     }
 
+    public Deck(Deck otherDeck) {
+        for (Card card : otherDeck.getDeck()
+                ) {
+            this.deck.add(card);
+
+        }
+    }
+
     /**
      * Method to add card in the deck
      *
@@ -109,6 +117,11 @@ public class Deck {
 
     }
 
+    public Card removeCard(int index) {
+        Card dealcards = deck.remove(index);
+        return dealcards;
+    }
+
     public void shuffle() {
         Log.d("Deck", "shuffling");
         Collections.shuffle(deck);
@@ -133,8 +146,11 @@ public class Deck {
         });
     }
 
-    // compare Cards by their rank, for a descending order
+    //
 
+    /**
+     * compare Cards by their rank, order same as sortBySuit method
+     */
     public void sortByRank() {
         Collections.sort(deck, new Comparator<Card>() {
             @Override

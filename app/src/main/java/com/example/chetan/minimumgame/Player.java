@@ -50,7 +50,12 @@ public class Player {
         int score = 0;
         for (Card c : mydeck.getDeck()
                 ) {
-            score += c.cardRank();
+            if (c.cardRank() == 14) {       //If card is Ace
+                score += 1;
+            } else {
+                score += c.cardRank();
+            }
+
         }
         AddScore(score);
     }

@@ -14,6 +14,15 @@ public class Card implements Comparable {
     private Rank CardValue;
     private Suit suit;
 
+    Card(Rank cardValue, Suit suit) {
+        CardValue = cardValue;
+        this.suit = suit;
+        this.showcardface = false;
+        this.current_X = 0;
+        this.current_Y = 0;
+        this.Image = null;
+
+    }
 
     Card(Rank value, Suit suit, boolean showcardface, int current_X, int current_Y, Bitmap image) {
         this.CardValue = value;
@@ -68,6 +77,14 @@ public class Card implements Comparable {
 
     public void setShowcardface(boolean showcardface) {
         this.showcardface = showcardface;
+    }
+
+    public Suit getSuit() {
+        return suit;
+    }
+
+    public Rank getCardRank() {
+        return CardValue;
     }
 
     public int cardRank() {
