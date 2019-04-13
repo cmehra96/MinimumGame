@@ -4,6 +4,7 @@ import android.nfc.Tag;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HandCombination {
 
@@ -130,6 +131,49 @@ public class HandCombination {
         return 0;
     }
 
+
+    public static ArrayList<Card> getStraight(Deck deck) {
+        boolean acetwocombo = false;
+        ArrayList<Integer> indexes = new ArrayList<>();
+        deck.sortByRank();
+        if (deck.getCard(0).cardRank() == 14)
+            deck.add((deck.getCard(0)));
+        int straight = 1;
+        indexes.add(0);
+        for (int i = 0; i < deck.Count() - 1; i++) {
+            if (straight == 3) {
+                break;
+            }
+            int currentrank = deck.getCard(i).cardRank();
+            if (currentrank - deck.getCard(i + 1).cardRank() == 1) {
+                straight++;
+                indexes.add(i + 1);
+
+            } else if (currentrank == 2 && deck.getCard(i + 1).cardRank() == 14) {
+                straight++;
+                indexes.add(0);
+
+            } else if (currentrank - deck.getCard(i + 1).cardRank() != 1) {
+                straight = 1;
+                indexes.clear();
+                indexes.add(i + 1);
+            }
+        }
+
+        if (indexes.size() != 0)
+            Collections.sort(indexes, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
+        if (deck.getCard(0).cardRank() == 14)
+            deck.removeCard(deck.Count() - 1);
+
+        ArrayList<Card> removedcards = new ArrayList<>();
+        for (int i = 0; i < indexes.size(); i++) {
+            removedcards.add(deck.removeCard(indexes.get(i)));
+        }
+
+
+        return removedcards;
+    }
+
     /**
      * Method to check whether selected card of
      * player is Three of a kind or not
@@ -143,4 +187,6 @@ public class HandCombination {
             return true;
         return false;
     }
+
+
 }

@@ -433,9 +433,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
             });
         } else {
-            if (AIPlayerlist.get(current_player - 1).getMydeck().Count() < 3) {
-                pickBestCard(AIPlayerlist.get((current_player - 1)).getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
+            AIPlayer currentaiplayer = AIPlayerlist.get(current_player - 1);
+            if (currentaiplayer.getMydeck().Count() < 3) {
+                pickBestCard(currentaiplayer.getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
             } else {
+
 
             }
             current_player++;

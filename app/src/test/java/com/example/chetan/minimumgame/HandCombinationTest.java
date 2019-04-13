@@ -27,11 +27,17 @@ public class HandCombinationTest {
     @Test
     public void isStraightWithAIPlayer() {
         Deck testdeck = new Deck();
-        testdeck.add(new Card(Rank.King, Suit.Clubs));
-        testdeck.add(new Card(Rank.Queen, Suit.Spades));
-        testdeck.add(new Card(Rank.Two, Suit.Diamond));
-        Card tempcard = new Card(Rank.Jack, Suit.Diamond);
+        testdeck.add(new Card(Rank.Three, Suit.Clubs));
+        testdeck.add(new Card(Rank.Two, Suit.Spades));
+        testdeck.add(new Card(Rank.Ace, Suit.Diamond));
+        Card tempcard = new Card(Rank.Ten, Suit.Diamond);
         int result = HandCombination.isStraight(testdeck, tempcard);
+
+        if (result == 1) {
+            ArrayList<Card> removedcards = HandCombination.getStraight(testdeck);
+
+        }
+
     }
 
     @Test
