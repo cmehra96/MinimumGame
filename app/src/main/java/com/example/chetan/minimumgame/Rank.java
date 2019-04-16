@@ -1,6 +1,7 @@
 package com.example.chetan.minimumgame;
 
 public enum Rank {
+    Ace(1, "ace", "ace"),
     Two(2, "two", "2"),
     Three(3, "three", "3"),
     Four(4, "four", "4"),
@@ -12,8 +13,7 @@ public enum Rank {
     Ten(10, "ten", "10"),
     Jack(11, "jack", "jack"),
     Queen(12, "queen", "queen"),
-    King(13, "king", "king"),
-    Ace(14, "ace", "ace");
+    King(13, "king", "king");
 
 
     private final int rank;

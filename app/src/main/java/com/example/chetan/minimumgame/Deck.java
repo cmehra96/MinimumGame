@@ -160,6 +160,15 @@ public class Deck {
         });
     }
 
+    public void sortByRankAsec() {
+        Collections.sort(deck, new Comparator<Card>() {
+            @Override
+            public int compare(Card lhs, Card rhs) {
+                return lhs.cardRank() - rhs.cardRank();
+            }
+        });
+    }
+
 
     /**
      * To Compare each
@@ -212,7 +221,7 @@ public class Deck {
         DiscardedDeck.add(Deal(true));
     }
 
-    private void clear() {
+    public void clear() {
         deck.clear();
     }
 

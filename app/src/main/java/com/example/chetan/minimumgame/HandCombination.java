@@ -30,9 +30,9 @@ public class HandCombination {
             tempDeck.add(mydeck.getCard(tempListindex.get(i)));
             i++;
         }
-        tempDeck.sortByRank();
+        tempDeck.sortByRankAsec();
 
-        if (tempDeck.getCard(0).cardRank() == 14)       // If first card is Ace
+        if (tempDeck.getCard(0).cardRank() == 1)       // If first card is Ace
         {
             Card tempCard = tempDeck.getCard(0);
             tempDeck.add(tempCard);
@@ -44,13 +44,14 @@ public class HandCombination {
                 break;
             }
             int currentrank = tempDeck.getCard(i).cardRank();
-            if (currentrank - tempDeck.getCard(i + 1).cardRank() == 1)           //if cards suit differ by 1, increment straight
+            int nextrank = tempDeck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1)           //if cards suit differ by 1, increment straight
             {
                 straightcount++;
-            } else if (currentrank == 2 && tempDeck.getCard((i + 1)).cardRank() == 14)     //specific condition for Two and Ace
+            } else if (nextrank == 1 && currentrank == 13)     //specific condition for King and Ace
             {
                 straightcount++;
-            } else if (currentrank - tempDeck.getCard(i + 1).cardRank() != 1)    //if cards suit not equal to 1, reset the straight counter
+            } else if (nextrank - currentrank != 1)    //if cards suit not equal to 1, reset the straight counter
             {
                 straightcount = 1;
             }
@@ -71,8 +72,8 @@ public class HandCombination {
      */
     public static int isStraight(Deck deck, Card card) {
         Deck tempdeck = new Deck(deck);
-        tempdeck.sortByRank();
-        if (tempdeck.getCard(0).cardRank() == 14)       // If first card is Ace
+        tempdeck.sortByRankAsec();
+        if (tempdeck.getCard(0).cardRank() == 1)       // If first card is Ace
         {
             Card tempCard = tempdeck.getCard(0);
             tempdeck.add(tempCard);
@@ -85,12 +86,15 @@ public class HandCombination {
                 break;
             }
             int currentrank = tempdeck.getCard(i).cardRank();
-            if (currentrank - tempdeck.getCard(i + 1).cardRank() == 1) {
+            int nextrank = tempdeck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1)           //if cards suit differ by 1, increment straight
+            {
                 straightcount++;
-
-            } else if (currentrank == 2 && tempdeck.getCard(i + 1).cardRank() == 14) {
+            } else if (nextrank == 1 && currentrank == 13)     //specific condition for King and Ace
+            {
                 straightcount++;
-            } else if (currentrank - tempdeck.getCard(i + 1).cardRank() != 1) {
+            } else if (nextrank - currentrank != 1)    //if cards suit not equal to 1, reset the straight counter
+            {
                 straightcount = 1;
             }
 
@@ -98,13 +102,13 @@ public class HandCombination {
         if (straightcount == 3)
             return 1;
 
-        if (tempdeck.getCard(0).cardRank() == 14) {
+        if (tempdeck.getCard(0).cardRank() == 1) {
             tempdeck.removeCard(tempdeck.Count() - 1);
         }
 
         tempdeck.add(card);
-        tempdeck.sortByRank();
-        if (tempdeck.getCard(0).cardRank() == 14)       // If first card is Ace
+        tempdeck.sortByRankAsec();
+        if (tempdeck.getCard(0).cardRank() == 1)       // If first card is Ace
         {
             Card tempCard = tempdeck.getCard(0);
             tempdeck.add(tempCard);
@@ -116,12 +120,13 @@ public class HandCombination {
             }
 
             int currentrank = tempdeck.getCard(i).cardRank();
-            if (currentrank - tempdeck.getCard(i + 1).cardRank() == 1) {
+            int nextrank = tempdeck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1) {
                 otherstraight++;
 
-            } else if (currentrank == 2 && tempdeck.getCard(i + 1).cardRank() == 14) {
+            } else if (nextrank == 1 && currentrank == 13) {
                 otherstraight++;
-            } else if (currentrank - tempdeck.getCard(i + 1).cardRank() != 1) {
+            } else if (nextrank - currentrank != 1) {
                 otherstraight = 1;
             }
         }
@@ -131,12 +136,17 @@ public class HandCombination {
         return 0;
     }
 
+    /**
+     * Method to find and remove straight cards from players deck
+     *
+     * @param deck Deck of player
+     * @return Array of removed cards
+     */
 
     public static ArrayList<Card> getStraight(Deck deck) {
-        boolean acetwocombo = false;
         ArrayList<Integer> indexes = new ArrayList<>();
-        deck.sortByRank();
-        if (deck.getCard(0).cardRank() == 14)
+        deck.sortByRankAsec();
+        if (deck.getCard(0).cardRank() == 1)
             deck.add((deck.getCard(0)));
         int straight = 1;
         indexes.add(0);
@@ -145,15 +155,16 @@ public class HandCombination {
                 break;
             }
             int currentrank = deck.getCard(i).cardRank();
-            if (currentrank - deck.getCard(i + 1).cardRank() == 1) {
+            int nextrank = deck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1) {
                 straight++;
                 indexes.add(i + 1);
 
-            } else if (currentrank == 2 && deck.getCard(i + 1).cardRank() == 14) {
+            } else if (nextrank == 1 && currentrank == 13) {
                 straight++;
                 indexes.add(0);
 
-            } else if (currentrank - deck.getCard(i + 1).cardRank() != 1) {
+            } else if (nextrank - currentrank != 1) {
                 straight = 1;
                 indexes.clear();
                 indexes.add(i + 1);
@@ -162,17 +173,107 @@ public class HandCombination {
 
         if (indexes.size() != 0)
             Collections.sort(indexes, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
-        if (deck.getCard(0).cardRank() == 14)
+        if (deck.getCard(0).cardRank() == 1)
             deck.removeCard(deck.Count() - 1);
 
         ArrayList<Card> removedcards = new ArrayList<>();
         for (int i = 0; i < indexes.size(); i++) {
-            removedcards.add(deck.removeCard(indexes.get(i)));
+            removedcards.add(deck.removeCard(indexes.get(i), true));
         }
 
 
         return removedcards;
     }
+
+
+    /**
+     * Create a straight set in player deck, by adding card from discarded deck
+     * removimg nonstraight card
+     *
+     * @param deck Deck of player
+     * @param card Discarded Deck card
+     * @return a non-straight card.
+     */
+    public static Card createStraight(Deck deck, Card card) {
+        Card removedcard = null;
+        int nonstraightcardindex = -1;
+        Deck tempdeck = new Deck();
+        deck.sortByRankAsec();
+        if (deck.getCard(0).cardRank() == 1)
+            deck.add((deck.getCard(0)));
+        int straight = 1;
+        int decksize = deck.Count();
+        tempdeck.add(deck.getCard(0));
+        for (int i = 0; i < decksize - 1; i++) {
+            if (straight == 3)
+                break;
+            int currentrank = deck.getCard(i).cardRank();
+            int nextrank = deck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1) {
+                straight++;
+                tempdeck.add(deck.getCard(i + 1));
+
+            } else if (nextrank == 1 && currentrank == 13) {
+                straight++;
+                tempdeck.add(deck.getCard(i + 1));
+            } else if (nextrank - currentrank != 1) {
+                straight = 1;
+                tempdeck.add(card);
+
+                if (isStraight(tempdeck)) {
+                    removedcard = deck.removeCard(i + 1);
+                    break;
+                } else {
+                    nonstraightcardindex = i;
+                }
+
+                tempdeck.clear();
+                tempdeck.add(deck.getCard(i + 1));
+            }
+        }
+        if (removedcard == null) {
+            removedcard = deck.removeCard(nonstraightcardindex);
+
+        }
+        deck.add(card);
+        return removedcard;
+    }
+
+    public static boolean isStraight(Deck tempdeck) {
+        tempdeck.sortByRankAsec();
+
+        if (tempdeck.getCard(0).cardRank() == 1)       // If first card is Ace
+        {
+            Card tempCard = tempdeck.getCard(0);
+            tempdeck.add(tempCard);
+        }
+        int straightcount = 1;
+        for (int i = 0; i < tempdeck.Count() - 1; i++) {
+            if (straightcount == 3) {
+                // Log.d(TAG, "is straight worked successfully");
+                break;
+            }
+            int currentrank = tempdeck.getCard(i).cardRank();
+            int nextrank = tempdeck.getCard(i + 1).cardRank();
+            if (nextrank - currentrank == 1)           //if cards suit differ by 1, increment straight
+            {
+                straightcount++;
+            } else if (nextrank == 1 && currentrank == 13)     //specific condition for King and Ace
+            {
+                straightcount++;
+            } else if (nextrank - currentrank != 1)    //if cards suit not equal to 1, reset the straight counter
+            {
+                straightcount = 1;
+            }
+        }
+
+        if (straightcount == 3)
+            return true;
+
+        return false;
+
+    }
+
 
     /**
      * Method to check whether selected card of
@@ -188,5 +289,53 @@ public class HandCombination {
         return false;
     }
 
+    public static int isThreeOfAKind(Deck deck, Card card) {
+        Deck tempdeck = new Deck(deck);
+        tempdeck.sortByRankAsec();
+        int count = tempdeck.Count();
+        for (int i = 0; i < count - 2; i++) {
+            if (tempdeck.getCard(i).cardRank() == tempdeck.getCard(i + 1).cardRank() && tempdeck.getCard(i).cardRank() == tempdeck.getCard(i + 2).cardRank())
+                return 1;
+        }
+        for (int i = 0; i < count - 1; i++) {
+            if (tempdeck.getCard(i).cardRank() == tempdeck.getCard(i + 1).cardRank() && tempdeck.getCard(i).cardRank() == card.cardRank())
+                return -1;
+        }
+
+        return 0;
+
+    }
+
+    public static ArrayList<Card> getThreeOfAKind(Deck deck) {
+        ArrayList<Card> removedcards = new ArrayList<>();
+        deck.sortByRank();
+        int count = deck.Count();
+        for (int i = 0; i < count - 2; i++) {
+            if (deck.getCard(i).cardRank() == deck.getCard(i + 1).cardRank() && deck.getCard(i).cardRank() == deck.getCard(i + 2).cardRank()) {
+                removedcards.add(deck.removeCard(i + 2));
+                removedcards.add(deck.removeCard(i + 1));
+                removedcards.add(deck.removeCard(i));
+                break;
+            }
+        }
+        return removedcards;
+    }
+
+    public static Card createThreeOfAKind(Deck deck, Card card) {
+        Card removedcard = null;
+        deck.sortByRank();
+        int count = deck.Count();
+        for (int i = 0; i < count - 1; i++) {
+            if (deck.getCard(i).cardRank() == deck.getCard(i + 1).cardRank() && deck.getCard(i).cardRank() == card.cardRank()) {
+                if (i - 1 >= 0)
+                    removedcard = deck.removeCard(i - 1);
+                else
+                    removedcard = deck.removeCard(i + 2);
+                deck.add(card);
+            }
+        }
+
+        return removedcard;
+    }
 
 }

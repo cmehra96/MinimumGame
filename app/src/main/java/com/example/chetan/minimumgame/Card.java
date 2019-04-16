@@ -43,6 +43,10 @@ public class Card implements Comparable {
 
     }
 
+    public Card() {
+
+    }
+
 
     public Bitmap getImage() {
 
