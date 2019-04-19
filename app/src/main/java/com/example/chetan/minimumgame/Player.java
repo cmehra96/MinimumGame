@@ -38,7 +38,7 @@ public class Player {
     }
 
     public int getScore() {
-        evaluatescore();
+       // evaluatescore();
         return Score;
     }
 
@@ -46,18 +46,15 @@ public class Player {
         Score = score;
     }
 
-    protected void evaluatescore() {
+    public int evaluatescore() {
         int score = 0;
         for (Card c : mydeck.getDeck()
                 ) {
-            if (c.cardRank() == 14) {       //If card is Ace
-                score += 1;
-            } else {
-                score += c.cardRank();
+
+              score += c.cardRank();
             }
 
-        }
-        AddScore(score);
+        return score;
     }
 
     public boolean isIssafed() {

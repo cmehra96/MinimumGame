@@ -232,9 +232,11 @@ public class HandCombination {
             }
         }
         if (removedcard == null) {
-            removedcard = deck.removeCard(nonstraightcardindex);
+            removedcard = deck.removeCard(nonstraightcardindex, true);
+
 
         }
+        card.setShowcardface(false);
         deck.add(card);
         return removedcard;
     }
@@ -328,10 +330,12 @@ public class HandCombination {
         for (int i = 0; i < count - 1; i++) {
             if (deck.getCard(i).cardRank() == deck.getCard(i + 1).cardRank() && deck.getCard(i).cardRank() == card.cardRank()) {
                 if (i - 1 >= 0)
-                    removedcard = deck.removeCard(i - 1);
+                    removedcard = deck.removeCard(i - 1, true);
                 else
-                    removedcard = deck.removeCard(i + 2);
+                    removedcard = deck.removeCard(i + 2, true);
+                card.setShowcardface(false);
                 deck.add(card);
+                break;
             }
         }
 

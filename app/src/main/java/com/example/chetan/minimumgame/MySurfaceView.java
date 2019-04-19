@@ -260,6 +260,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 cardindex = -1;
             } else if (isLongTouched) {
                 Collections.sort(tempListindex, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
+                if ((HandCombination.isStraight(player.getMydeck(), tempListindex)) == false && HandCombination.isStraight(player.getMydeck(),tempListindex)==false) {
+                    Log.d(TAG, "Inside Discarded Deck Touched Cards should be either straight or three of a kind set retry now");
+                    tempListindex.clear();
+                    return;
+                }
+
+
                 int size = tempListindex.size() - 1;
                 int i = 0;
                 Card Discarddeckcard;
@@ -285,8 +292,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 cardindex = -1;
             } else if (isLongTouched) {
                 Collections.sort(tempListindex, Collections.<Integer>reverseOrder());        //Fix array out of bound exception as card always remove in descending order
-                if ((HandCombination.isStraight(player.getMydeck(), tempListindex)) == false) {
-                    Log.d(TAG, "Touched Cards are not straight set retry now");
+                if ((HandCombination.isStraight(player.getMydeck(), tempListindex)) == false &&HandCombination.isStraight(player.getMydeck(),tempListindex)==false) {
+                    Log.d(TAG, "Inside Dealt Deck Touched Cards should be either straight or three of a kind set retry now");
                     tempListindex.clear();
                     return;
                 }
@@ -437,8 +444,33 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             if (currentaiplayer.getMydeck().Count() < 3) {
                 pickBestCard(currentaiplayer.getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
             } else {
+                int result = HandCombination.isStraight(currentaiplayer.getMydeck(), discardedDeck.getTopCard());
+                int result2 = HandCombination.isThreeOfAKind(currentaiplayer.getMydeck(), discardedDeck.getTopCard());
+                if (result == 1)           //Straight card exist in Player Deck
+                {
+                    ArrayList<Card> straightcards = HandCombination.getStraight(currentaiplayer.getMydeck());
+                    currentaiplayer.addToHand(discardedDeck.removeCard(discardedDeck.Count() - 1, false));
+                    for (Card card : straightcards) {
+                        discardedDeck.add(card);
+                    }
+                } else if (result == -1)     //Straight card created by deck and discarded deck card combination
+                {
+                    Card nonstraightcard = HandCombination.createStraight(currentaiplayer.getMydeck(), discardedDeck.getTopCard());
+                    discardedDeck.add(nonstraightcard);
+                } else if (result2 == 1)     //Three of kind exist in Player Deck
+                {
+                    ArrayList<Card> threeofakindcards = HandCombination.getThreeOfAKind(currentaiplayer.getMydeck());
+                    currentaiplayer.addToHand(discardedDeck.removeCard(discardedDeck.Count() - 1, false));
+                    for (Card card : threeofakindcards) {
+                        discardedDeck.add(card);
+                    }
+                } else if (result2 == -1)        //Three of kind created using Player deck and Discarded Deck card
+                {
+                    Card threeofkindcard = HandCombination.createThreeOfAKind(currentaiplayer.getMydeck(), discardedDeck.getTopCard());
+                    discardedDeck.add(threeofkindcard);
 
-
+                } else
+                    pickBestCard(currentaiplayer.getMydeck(), discardedDeck.getTopCard());  //IF nothing match, pick AI player  deck largest card
             }
             current_player++;
         }
