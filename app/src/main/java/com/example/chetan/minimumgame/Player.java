@@ -38,7 +38,7 @@ public class Player {
     }
 
     public int getScore() {
-       // evaluatescore();
+        // evaluatescore();
         return Score;
     }
 
@@ -51,8 +51,8 @@ public class Player {
         for (Card c : mydeck.getDeck()
                 ) {
 
-              score += c.cardRank();
-            }
+            score += c.cardRank();
+        }
 
         return score;
     }
@@ -111,4 +111,8 @@ public class Player {
         mydeck.setCurrentCard(localcard, currentiteration);
     }
 
+    public void reset() {
+
+        mydeck.clear();
+    }
 }

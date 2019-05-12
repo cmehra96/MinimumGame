@@ -7,6 +7,8 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class MainActivity extends Activity {
+    MySurfaceView surfaceView;
+    MySurfaceViewThread surfaceViewThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,8 +16,9 @@ public class MainActivity extends Activity {
         try {
 
             setContentView(R.layout.activity_main);
-            MySurfaceView surfaceView;
+
             surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
+            surfaceViewThread= surfaceView.getThread();
             surfaceView.setActivity(this);
 
 
@@ -24,4 +27,18 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    @Override
+    protected void onResume() {
+        surfaceView.onResume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        surfaceView.onPause();
+        super.onPause();
+    }
+
+
 }

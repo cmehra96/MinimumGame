@@ -1,6 +1,7 @@
 package com.example.chetan.minimumgame;
 
 import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.os.Looper;
 import android.view.Choreographer;
 import android.view.SurfaceHolder;
@@ -19,6 +20,9 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
     private SurfaceHolder mySurfaceHolder;
     private Choreographer myChoreographer = null;
     private Looper myLooper = null;
+    boolean pause =false;
+
+
 
     public MySurfaceViewThread(SurfaceHolder paramSurfaceHolder, MySurfaceView paramSurfaceView) {
         mySurfaceHolder = paramSurfaceHolder;
@@ -88,6 +92,7 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
                 c = mySurfaceHolder.lockCanvas();
                 Thread.sleep(100);
                 synchronized (mySurfaceHolder) {
+                    if(!pause)
                     mySurfaceView.render(c);
                 }
 
@@ -115,5 +120,38 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
 
     }
 
+    public synchronized void restoreState(Bundle savedState)
+    {
+        synchronized (mySurfaceHolder)
+        {
 
+        }
+    }
+
+    public Bundle saveState(Bundle map)
+    {
+        synchronized (mySurfaceHolder)
+        {
+            if(map!=null)
+            {
+                map.p
+            }
+        }
+    }
+
+
+    public void onPause() {
+        synchronized (mySurfaceHolder)
+        {
+            pause=true;
+        }
+    }
+
+    public void onResume()
+    {
+        synchronized (mySurfaceHolder)
+        {
+            pause=false;
+        }
+    }
 }
