@@ -1,6 +1,8 @@
 package com.example.chetan.minimumgame;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +10,7 @@ import android.graphics.Canvas;
 //import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
@@ -21,12 +24,18 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import android.os.Handler;
+import android.widget.Toast;
 
+import com.example.chetan.minimumgame.SaveInstance.Icicle;
+import com.example.chetan.minimumgame.SaveInstance.SaveInstance;
 import com.example.chetan.minimumgame.ScoreCard.ScoreCard;
 import com.example.chetan.minimumgame.ScoreCard.ScoreCardPopup;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import icepick.Icepick;
+import icepick.State;
 
 
 public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback {
@@ -42,8 +51,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Context context;
     private DisplayMetrics metrics;
     private MySurfaceViewThread thread;
-    private int Screen_Width;
-    private int Screen_Height;
+    @State int Screen_Width;
+    @State int Screen_Height;
     private float density;
     private int Card_Width;
     private int Card_Height;
@@ -55,13 +64,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Deck DeatlDeck;
     //private Deck DiscardedDeck;
     // private Deck Top_Center_Player;
-    private Bitmap BlueBackCard;
+    Bitmap BlueBackCard;
     private int DealtDeck_CurrentX;
     private int DealtDeck_CurrentY;
     private int DiscardedDeck_CurrentX;
     private int DiscardedDeck_CurrentY;
     private boolean isLongTouched = false;
-    private Card touchedcard = null;
+    Card touchedcard = null;
     private int cardindex = -1;
     private Card replacedcard = null;
     private GestureDetector gestureDetector;
@@ -125,20 +134,22 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-       /* boolean retry = true;
+        boolean retry = true;
         thread.setRunning(false);
         while (retry) {
             try {
                 thread.join();
+                thread = null;
                 retry = false;
             } catch (InterruptedException e) {
 
             }
         }
-        */
+
     }
 
     public void onPause() {
+        /*
         if (thread != null) {
             thread.onPause();
             boolean retry = true;
@@ -154,11 +165,15 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
         }
+        */
+
     }
 
     public void onResume() {
-        if(thread!=null)
+        /*if(thread!=null)
             thread.onResume();
+            */
+
     }
 
     @Override
@@ -188,7 +203,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         callminimum = new MyButton(Screen_Width, Screen_Height, Screen_Width / 9, Screen_Height / 5, (BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
         discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
         roundcounter = 0;
+        gamecounter=0;
         initializePlayers();
+
     }
 
     private void initializePlayers() {
@@ -231,6 +248,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             AIPlayerlist.get(i).addToHand(DeatlDeck.Deal(false));
         }
         */
+
         for (int i = 0; i < playerList.size(); i++) {
             if (i == 0) {
                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
@@ -247,11 +265,17 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private void DealSingleCard() {
         Log.d(TAG, "inside single deal card method");
-        for (int i = 0; i < playerList.size(); i++) {
-            if (i == 0)
-                playerList.get(i).addToHand(DeatlDeck.Deal(true));
-            else
-                playerList.get(i).addToHand(DeatlDeck.Deal(false));
+        if(DeatlDeck.Count()>playerList.size()) {
+            for (int i = 0; i < playerList.size(); i++) {
+                if (i == 0)
+                    playerList.get(i).addToHand(DeatlDeck.Deal(true));
+                else
+                    playerList.get(i).addToHand(DeatlDeck.Deal(false));
+            }
+        }
+        else
+        {
+            DeatlDeck.refill(discardedDeck, DealtDeck_CurrentX, DealtDeck_CurrentY);
         }
     }
 
@@ -498,9 +522,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         if (roundcounter == 7) {
             roundcounter = 0;
             gamecounter++;
-            if (gamecounter == 4)
+            if (gamecounter == 2)
                 gameover();
-            playerList.reset();
+            playerList.reset(discardedDeck);
+            DeatlDeck.refill(discardedDeck, DealtDeck_CurrentX, DealtDeck_CurrentY);
         }
 
 
@@ -514,8 +539,46 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         String tempname = playerList.get(0).getName();
         int tempscore = playerList.get(0).getScore();
         for (int i = 0; i < playerList.size(); i++) {
-
+            if(playerList.get(i).getScore()<tempscore)
+                tempname=playerList.get(i).getName();
         }
+
+        parent.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                 Toast.makeText(parent, "Won", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder= new AlertDialog.Builder(parent);
+                builder.setTitle("Do you want to Quit");
+                builder.setMessage("Select any one of the options");
+                builder.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        parent.finish();
+                    }
+                });
+                builder.setNeutralButton("Restart", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // startActivity(new Intent(MainActivity.this,MainActivity.class));
+                        // finish();
+                      parent.recreate();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        }, 200);
+
+
+
     }
 
     public void render(Canvas canvas) {
@@ -747,8 +810,28 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     {
         return thread;
     }
+/*
+    public void restoreState(Bundle savedInstanceState) {
 
+        Icicle.load(savedInstanceState,this);
+    }
 
+    public void saveState(Bundle state) {
+
+        Icicle.save(state,this);
+    }
+    */
+
+ @Override public Parcelable onSaveInstanceState()
+ {
+       Log.d(TAG,"Inside onSaveInstanceState method");
+        return Icepick.saveInstanceState(this,super.onSaveInstanceState());
+ }
+
+ @Override public void onRestoreInstanceState(Parcelable state)
+ {
+     super.onRestoreInstanceState(Icepick.restoreInstanceState(this,state));
+ }
 
 }
 

@@ -130,14 +130,9 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
 
     public Bundle saveState(Bundle map)
     {
-        synchronized (mySurfaceHolder)
-        {
-            if(map!=null)
-            {
-                map.p
-            }
-        }
+        return null;
     }
+
 
 
     public void onPause() {

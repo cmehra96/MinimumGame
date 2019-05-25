@@ -131,9 +131,9 @@ public class PlayerList implements List<Player> {
         return null;
     }
 
-    public void reset() {
+    public void reset(DiscardedDeck discardedDeck) {
         for (Player player : list) {
-            player.reset();
+            player.reset(discardedDeck);
         }
     }
 }

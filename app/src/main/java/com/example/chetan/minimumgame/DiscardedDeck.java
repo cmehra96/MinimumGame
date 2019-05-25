@@ -17,6 +17,7 @@ public class DiscardedDeck {
         this.current_Y = current_Y;
     }
 
+
     public void add(Card card) {
         card.setCurrent_X(current_X);
         card.setCurrent_Y(current_Y);

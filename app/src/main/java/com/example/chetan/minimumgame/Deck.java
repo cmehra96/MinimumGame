@@ -207,6 +207,7 @@ public class Deck {
      * @param dealtDeck_CurrentY update currentY of the card
      */
     public void refill(DiscardedDeck DiscardedDeck, int dealtDeck_CurrentX, int dealtDeck_CurrentY) {
+
         int count = DiscardedDeck.Count() - 1;
         int i = 0;
         while (count >= 0) {

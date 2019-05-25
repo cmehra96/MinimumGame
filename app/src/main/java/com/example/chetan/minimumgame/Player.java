@@ -111,8 +111,16 @@ public class Player {
         mydeck.setCurrentCard(localcard, currentiteration);
     }
 
-    public void reset() {
+    /**
+     * Method to clear deck of player and
+      * @param discardedDeck
+     */
+    public void reset(DiscardedDeck discardedDeck) {
+        for (Card card:mydeck.getDeck()
+             ) {
+            discardedDeck.add(card);
 
+        }
         mydeck.clear();
     }
 }
