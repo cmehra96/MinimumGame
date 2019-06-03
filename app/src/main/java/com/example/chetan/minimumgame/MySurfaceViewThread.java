@@ -20,8 +20,7 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
     private SurfaceHolder mySurfaceHolder;
     private Choreographer myChoreographer = null;
     private Looper myLooper = null;
-    boolean pause =false;
-
+    boolean pause = false;
 
 
     public MySurfaceViewThread(SurfaceHolder paramSurfaceHolder, MySurfaceView paramSurfaceView) {
@@ -92,8 +91,8 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
                 c = mySurfaceHolder.lockCanvas();
                 Thread.sleep(100);
                 synchronized (mySurfaceHolder) {
-                    if(!pause)
-                    mySurfaceView.render(c);
+                    if (!pause)
+                        mySurfaceView.render(c);
                 }
 
                 //  mySurfaceView.render(c);
@@ -120,33 +119,26 @@ public class MySurfaceViewThread extends Thread { //implements Choreographer.Fra
 
     }
 
-    public synchronized void restoreState(Bundle savedState)
-    {
-        synchronized (mySurfaceHolder)
-        {
+    public synchronized void restoreState(Bundle savedState) {
+        synchronized (mySurfaceHolder) {
 
         }
     }
 
-    public Bundle saveState(Bundle map)
-    {
+    public Bundle saveState(Bundle map) {
         return null;
     }
 
 
-
     public void onPause() {
-        synchronized (mySurfaceHolder)
-        {
-            pause=true;
+        synchronized (mySurfaceHolder) {
+            pause = true;
         }
     }
 
-    public void onResume()
-    {
-        synchronized (mySurfaceHolder)
-        {
-            pause=false;
+    public void onResume() {
+        synchronized (mySurfaceHolder) {
+            pause = false;
         }
     }
 }

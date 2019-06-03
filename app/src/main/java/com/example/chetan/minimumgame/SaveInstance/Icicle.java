@@ -20,11 +20,9 @@ public class Icicle {
     /**
      * Find all fields with the {@link SaveInstance} annotation and add them to the {@link Bundle}.
      *
-     * @param outState
-     *         The bundle from {@link Activity#onSaveInstanceState(Bundle)} or {@link
-     *         Fragment#onSaveInstanceState(Bundle)}
-     * @param classInstance
-     *         The object to access the fields which have the {@link SaveInstance} annotation.
+     * @param outState      The bundle from {@link Activity#onSaveInstanceState(Bundle)} or {@link
+     *                      Fragment#onSaveInstanceState(Bundle)}
+     * @param classInstance The object to access the fields which have the {@link SaveInstance} annotation.
      * @see #load(Bundle, Object)
      */
     public static void save(Bundle outState, Object classInstance) {
@@ -34,13 +32,10 @@ public class Icicle {
     /**
      * Find all fields with the {@link SaveInstance} annotation and add them to the {@link Bundle}.
      *
-     * @param outState
-     *         The bundle from {@link Activity#onSaveInstanceState(Bundle)} or {@link
-     *         Fragment#onSaveInstanceState(Bundle)}
-     * @param classInstance
-     *         The object to access the fields which have the {@link SaveInstance} annotation.
-     * @param baseClass
-     *         Base class, used to get all superclasses of the instance.
+     * @param outState      The bundle from {@link Activity#onSaveInstanceState(Bundle)} or {@link
+     *                      Fragment#onSaveInstanceState(Bundle)}
+     * @param classInstance The object to access the fields which have the {@link SaveInstance} annotation.
+     * @param baseClass     Base class, used to get all superclasses of the instance.
      * @see #load(Bundle, Object, Class)
      */
     public static void save(Bundle outState, Object classInstance, Class<?> baseClass) {
@@ -73,10 +68,8 @@ public class Icicle {
     /**
      * Load all saved fields that have the {@link SaveInstance} annotation.
      *
-     * @param savedInstanceState
-     *         The saved-instance {@link Bundle} from an {@link Activity} or {@link Fragment}.
-     * @param classInstance
-     *         The object to access the fields which have the {@link SaveInstance} annotation.
+     * @param savedInstanceState The saved-instance {@link Bundle} from an {@link Activity} or {@link Fragment}.
+     * @param classInstance      The object to access the fields which have the {@link SaveInstance} annotation.
      * @see #save(Bundle, Object)
      */
     public static void load(Bundle savedInstanceState, Object classInstance) {
@@ -86,12 +79,9 @@ public class Icicle {
     /**
      * Load all saved fields that have the {@link SaveInstance} annotation.
      *
-     * @param savedInstanceState
-     *         The saved-instance {@link Bundle} from an {@link Activity} or {@link Fragment}.
-     * @param classInstance
-     *         The object to access the fields which have the {@link SaveInstance} annotation.
-     * @param baseClass
-     *         Base class, used to get all superclasses of the instance.
+     * @param savedInstanceState The saved-instance {@link Bundle} from an {@link Activity} or {@link Fragment}.
+     * @param classInstance      The object to access the fields which have the {@link SaveInstance} annotation.
+     * @param baseClass          Base class, used to get all superclasses of the instance.
      * @see #save(Bundle, Object, Class)
      */
     public static void load(Bundle savedInstanceState, Object classInstance, Class<?> baseClass) {

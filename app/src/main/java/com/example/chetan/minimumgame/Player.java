@@ -7,6 +7,10 @@ public class Player {
     protected String name;
     protected int Score;
     protected boolean issafed;
+    protected boolean roundwon;
+    protected int previousroundscore;
+    protected Card currentroundcard;
+
 
     public Player() {
 
@@ -19,12 +23,15 @@ public class Player {
         this.name = name;
         Score = score;
         this.issafed = issafed;
+        roundwon = false;
+
     }
 
     public Player(String name) {
         this.name = name;
         Score = 0;
         issafed = false;
+        roundwon = false;
 
     }
 
@@ -42,6 +49,10 @@ public class Player {
         return Score;
     }
 
+    public int getPreviousroundscore() {
+        return previousroundscore;
+    }
+
     public void setScore(int score) {
         Score = score;
     }
@@ -53,7 +64,7 @@ public class Player {
 
             score += c.cardRank();
         }
-
+        previousroundscore = score;
         return score;
     }
 
@@ -78,6 +89,7 @@ public class Player {
     }
 
     public void addToHand(Card card) {
+        currentroundcard = card;
         mydeck.add(card);
 
     }
@@ -113,14 +125,27 @@ public class Player {
 
     /**
      * Method to clear deck of player and
-      * @param discardedDeck
+     *
+     * @param discardedDeck
      */
     public void reset(DiscardedDeck discardedDeck) {
-        for (Card card:mydeck.getDeck()
-             ) {
+        for (Card card : mydeck.getDeck()
+                ) {
             discardedDeck.add(card);
 
         }
         mydeck.clear();
+    }
+
+    public boolean isRoundwon() {
+        return roundwon;
+    }
+
+    public void setRoundwon(boolean roundwon) {
+        this.roundwon = roundwon;
+    }
+
+    public Card getCurrentroundcard() {
+        return currentroundcard;
     }
 }

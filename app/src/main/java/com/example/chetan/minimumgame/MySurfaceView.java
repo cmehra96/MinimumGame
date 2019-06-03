@@ -51,8 +51,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private Context context;
     private DisplayMetrics metrics;
     private MySurfaceViewThread thread;
-    @State int Screen_Width;
-    @State int Screen_Height;
+    @State
+    int Screen_Width;
+    @State
+    int Screen_Height;
     private float density;
     private int Card_Width;
     private int Card_Height;
@@ -125,7 +127,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         // Log.d(TAG, "Inside Surface Created method");
         initializevariable();
         AllocatedCardList();
-        if(thread==null)
+        if (thread == null)
             thread = new MySurfaceViewThread(getHolder(), this);
         thread.setRunning(true);
         thread.start();
@@ -203,7 +205,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         callminimum = new MyButton(Screen_Width, Screen_Height, Screen_Width / 9, Screen_Height / 5, (BitmapFactory.decodeResource(getResources(), R.drawable.call_button_up)));
         discardedDeck = new DiscardedDeck(DiscardedDeck_CurrentX, DiscardedDeck_CurrentY);
         roundcounter = 0;
-        gamecounter=0;
+        gamecounter = 0;
         initializePlayers();
 
     }
@@ -252,11 +254,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         for (int i = 0; i < playerList.size(); i++) {
             if (i == 0) {
                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
-                // playerList.get(i).addToHand(DeatlDeck.Deal(true));
+                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
                 //playerList.get(i).addToHand(DeatlDeck.Deal(true));
             } else {
-                playerList.get(i).addToHand(DeatlDeck.Deal(false));
-                //playerList.get(i).addToHand(DeatlDeck.Deal(false));
+                playerList.get(i).addToHand(DeatlDeck.Deal(true));
+                playerList.get(i).addToHand(DeatlDeck.Deal(true));
                 //playerList.get(i).addToHand(DeatlDeck.Deal(false));
             }
         }
@@ -265,16 +267,14 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     private void DealSingleCard() {
         Log.d(TAG, "inside single deal card method");
-        if(DeatlDeck.Count()>playerList.size()) {
+        if (DeatlDeck.Count() > playerList.size()) {
             for (int i = 0; i < playerList.size(); i++) {
                 if (i == 0)
                     playerList.get(i).addToHand(DeatlDeck.Deal(true));
                 else
                     playerList.get(i).addToHand(DeatlDeck.Deal(false));
             }
-        }
-        else
-        {
+        } else {
             DeatlDeck.refill(discardedDeck, DealtDeck_CurrentX, DealtDeck_CurrentY);
         }
     }
@@ -455,13 +455,17 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
         int roundscore = playerList.get(current_player).evaluatescore();
         boolean roundwon = true;
+        int winnerplayerindex = current_player;
         for (int i = 0; i < playerList.size(); i++) {
             if (i == current_player)
                 continue;
             int playerroundscore = playerList.get(i).evaluatescore();
             if (roundscore >= playerroundscore) {
-                roundwon = false;
-                break;
+                {
+                    roundwon = false;
+                    winnerplayerindex = i;
+                    break;
+                }
             }
         }
 
@@ -470,10 +474,12 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 if (i == current_player)
                     continue;
                 playerList.get(i).AddScore(playerList.get(i).evaluatescore());
+                playerList.get(i).setRoundwon(false);
             }
-        } else
+        } else {
             playerList.get(current_player).AddScore(20);            // 20 Points added if round is lost
-
+            playerList.get(winnerplayerindex).setRoundwon(true);          //index of AI player which round won
+        }
 
         for (int i = 0; i < playerList.size(); i++) {
             if (i != 0) {
@@ -539,14 +545,14 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         String tempname = playerList.get(0).getName();
         int tempscore = playerList.get(0).getScore();
         for (int i = 0; i < playerList.size(); i++) {
-            if(playerList.get(i).getScore()<tempscore)
-                tempname=playerList.get(i).getName();
+            if (playerList.get(i).getScore() < tempscore)
+                tempname = playerList.get(i).getName();
         }
 
         parent.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                 Toast.makeText(parent, "Won", Toast.LENGTH_SHORT).show();
+                Toast.makeText(parent, "Won", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -554,7 +560,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                AlertDialog.Builder builder= new AlertDialog.Builder(parent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(parent);
                 builder.setTitle("Do you want to Quit");
                 builder.setMessage("Select any one of the options");
                 builder.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
@@ -568,7 +574,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                     public void onClick(DialogInterface dialog, int which) {
                         // startActivity(new Intent(MainActivity.this,MainActivity.class));
                         // finish();
-                      parent.recreate();
+                        parent.recreate();
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -576,7 +582,6 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
             }
         }, 200);
-
 
 
     }
@@ -626,7 +631,11 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
             });
         } else {
             AIPlayer currentaiplayer = (AIPlayer) playerList.get(current_player);
-            if (currentaiplayer.getMydeck().Count() < 3) {
+            int callpercent = currentaiplayer.getCallPercent(playerList, current_player);
+            Log.d(TAG,"Call percent inside surfaceview " +callpercent);
+            if (callpercent >= 100) {
+                showdown(current_player);
+            } else if (currentaiplayer.getMydeck().Count() < 3) {
                 pickBestCard(currentaiplayer.getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
             } else {
                 int result = HandCombination.isStraight(currentaiplayer.getMydeck(), discardedDeck.getTopCard());
@@ -806,8 +815,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-    public MySurfaceViewThread getThread()
-    {
+    public MySurfaceViewThread getThread() {
         return thread;
     }
 /*
@@ -822,16 +830,16 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     }
     */
 
- @Override public Parcelable onSaveInstanceState()
- {
-       Log.d(TAG,"Inside onSaveInstanceState method");
-        return Icepick.saveInstanceState(this,super.onSaveInstanceState());
- }
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Log.d(TAG, "Inside onSaveInstanceState method");
+        return Icepick.saveInstanceState(this, super.onSaveInstanceState());
+    }
 
- @Override public void onRestoreInstanceState(Parcelable state)
- {
-     super.onRestoreInstanceState(Icepick.restoreInstanceState(this,state));
- }
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(Icepick.restoreInstanceState(this, state));
+    }
 
 }
 

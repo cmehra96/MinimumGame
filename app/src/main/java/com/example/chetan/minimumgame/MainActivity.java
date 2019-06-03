@@ -26,11 +26,11 @@ public class MainActivity extends Activity {
             setContentView(R.layout.activity_main);
 
             surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
-            surfaceViewThread= surfaceView.getThread();
+            surfaceViewThread = surfaceView.getThread();
             surfaceView.setActivity(this);
 
-           Icepick.restoreInstanceState(this,savedInstanceState);
-           // if(savedInstanceState!=null)
+            Icepick.restoreInstanceState(this, savedInstanceState);
+            // if(savedInstanceState!=null)
             //    surfaceView.restoreState(savedInstanceState);
 
         } catch (Exception e) {
@@ -52,8 +52,8 @@ public class MainActivity extends Activity {
     }
    */
 
-    @Override public void onSaveInstanceState(Bundle state)
-    {
+    @Override
+    public void onSaveInstanceState(Bundle state) {
         super.onSaveInstanceState(state);
         Icepick.saveInstanceState(this, state);
 
@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Do you want to Quit");
         builder.setMessage("Select any one of the options");
         builder.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
@@ -74,8 +74,8 @@ public class MainActivity extends Activity {
         builder.setNeutralButton("Restart", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-               // startActivity(new Intent(MainActivity.this,MainActivity.class));
-               // finish();
+                // startActivity(new Intent(MainActivity.this,MainActivity.class));
+                // finish();
                 recreate();
             }
         });

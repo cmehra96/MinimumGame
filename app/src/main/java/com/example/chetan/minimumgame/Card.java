@@ -11,7 +11,6 @@ import android.os.Parcelable;
 
 import icepick.Bundler;
 
-@org.parceler.Parcel
 public class Card implements Comparable {
     private int current_X;
     private int current_Y;
@@ -137,7 +136,6 @@ public class Card implements Comparable {
         @Override
         protected Bitmap doInBackground(Object... objects) {
             try {
-
                 return getBitmap();
             } catch (Exception e) {
                 e.printStackTrace();

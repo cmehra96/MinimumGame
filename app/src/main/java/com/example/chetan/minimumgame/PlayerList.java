@@ -12,6 +12,19 @@ public class PlayerList implements List<Player> {
 
     List<Player> list = new ArrayList<>();
 
+    public PlayerList() {
+
+    }
+
+    public PlayerList(PlayerList playerList) {
+        for (Player player :
+                playerList) {
+            add(player);
+
+        }
+        ;
+    }
+
     @Override
     public int size() {
         return list.size();
@@ -102,7 +115,7 @@ public class PlayerList implements List<Player> {
 
     @Override
     public Player remove(int index) {
-        return null;
+        return list.remove(index);
     }
 
     @Override
