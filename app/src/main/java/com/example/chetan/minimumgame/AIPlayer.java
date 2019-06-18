@@ -46,23 +46,72 @@ public class AIPlayer extends Player {
 
 
     public int getCallPercent(PlayerList playerList, int currentaiplayer) {
-        Log.d(TAG,"Inside get call percent method");
-        calculatePercentValue(playerList, currentaiplayer);
+        Log.d(TAG, "Inside get call percent method");
         playerindex = currentaiplayer;
-        Log.d(TAG,"Get Call percent method executed succesfully");
+        calculatePercentValue(playerList, currentaiplayer);
+        Log.d(TAG, "Get Call percent method executed succesfully");
         return callpercent;
     }
 
     private void calculatePercentValue(PlayerList playerList, int currentaiplayer) {
         Log.d("Thread", "Inside Evaluator method");
-        new Evaluator().execute(playerList);
-    }
+      //  new Evaluator().execute(playerList);
+        Log.d(TAG, "Inside evaluator class percent calculate method");
+        PlayerList players = new PlayerList(playerList);
+        Player currentplayer = players.get(playerindex);
+        int cardcount = currentplayer.decksize();
+        int index = 0;
+        int no_of_players = players.size();
+        int currentplayerlastroundscore = currentplayer.getPreviousroundscore();
+        Card roundcard = currentplayer.getCurrentroundcard();
+        int temp_percent = 0;
+        if (cardcount <= 2) {
+            if (currentplayer.evaluatescore() <= 3) {
+                callpercent = 100;
+                return;
+            }
+        }
+        while (index < no_of_players) {
+            if (index == playerindex)       //if index is current player;
+            {
+                index++;
+                continue;
+            }
+            Player otherplayer = players.get(index);
+            int otherplayercards = otherplayer.decksize();
+            int otherplayerlastroundscore = otherplayer.getPreviousroundscore();
+            if (cardcount <= otherplayercards)  // if current player card is less than other player card
+            {
+                if ((currentplayerlastroundscore + roundcard.cardRank()) <= otherplayerlastroundscore) // if last round won by current player
+                {
+                    temp_percent += 100;
+                } else if ((currentplayerlastroundscore + roundcard.cardRank()) <= otherplayercards + 2) {
+                    temp_percent += new Random().nextInt(51) + 50; // [0,50] +50 => [50,100] //random percent from 50 to 100
+                } else {
+                    temp_percent += new Random().nextInt(101);
+                }
+            } else {
+                if((float)currentplayer.evaluatescore() / currentplayer.decksize() <=2.5)
+                {
+                    temp_percent += new Random().nextInt(51) + 50; // [0,50] +50 => [50,100] //random percent from 50 to 100
+                }
+                else
+                {
+                    temp_percent += new Random().nextInt(101);
+                }
+            }
+            index++;
+        }
+        callpercent = temp_percent / (no_of_players-1); // excluding current player
+        Log.d(TAG, "Call percent" + callpercent);
 
-    private class Evaluator extends AsyncTask<PlayerList, Void, Void> {
+    }
+/*
+    private class Evaluator extends AsyncTask<PlayerList, Void, Integer> {
 
         @Override
-        protected Void doInBackground(PlayerList... playerLists) {
-            Log.d(TAG,"Inside evaluator class percent calculate method");
+        protected Integer doInBackground(PlayerList... playerLists) {
+            Log.d(TAG, "Inside evaluator class percent calculate method");
             PlayerList players = new PlayerList(playerLists[0]);
             Player currentplayer = players.get(playerindex);
             int cardcount = currentplayer.decksize();
@@ -74,7 +123,7 @@ public class AIPlayer extends Player {
             if (cardcount <= 2) {
                 if (currentplayer.evaluatescore() <= 3)
                     callpercent = 100;
-                return null;
+                return callpercent;
             }
             while (index < no_of_players) {
                 if (index == playerindex)       //if index is current player;
@@ -97,10 +146,10 @@ public class AIPlayer extends Player {
                 }
                 index++;
             }
-            callpercent= temp_percent/no_of_players;
-            Log.d(TAG,"Call percent"+callpercent);
-            return null;
+            callpercent = temp_percent / no_of_players;
+            Log.d(TAG, "Call percent" + callpercent);
+            return callpercent;
         }
     }
-
+*/
 }

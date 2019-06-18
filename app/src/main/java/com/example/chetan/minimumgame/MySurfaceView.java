@@ -10,7 +10,9 @@ import android.graphics.Canvas;
 //import android.graphics.PorterDuff;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
@@ -24,6 +26,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import android.os.Handler;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.example.chetan.minimumgame.SaveInstance.Icicle;
@@ -56,8 +59,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @State
     int Screen_Height;
     private float density;
-    private int Card_Width;
-    private int Card_Height;
+    @State int Card_Width;
+    @State int Card_Height;
     private int Screen_Center_X;
     private int Screen_Center_Y;
     private int Screen_Bottom_Middle_X;
@@ -125,8 +128,21 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         // Log.d(TAG, "Inside Surface Created method");
-        initializevariable();
-        AllocatedCardList();
+        // To fix incorrect width and height issue moved the code
+        //Solution from https://stackoverflow.com/questions/3591784/views-getwidth-and-getheight-returns-0/24035591#24035591
+        final ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Removing layout listener to avoid multiple calls
+                viewTreeObserver.removeOnGlobalLayoutListener(this);
+                initializevariable();
+                AllocatedCardList();
+
+            }
+        });
+       // initializevariable();
+       // AllocatedCardList();
         if (thread == null)
             thread = new MySurfaceViewThread(getHolder(), this);
         thread.setRunning(true);
@@ -180,7 +196,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        Log.d(TAG,"Inside surface change method");
+        Screen_Width=width;
+        Screen_Height=height;
     }
 
 
@@ -254,7 +272,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         for (int i = 0; i < playerList.size(); i++) {
             if (i == 0) {
                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
-                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
+                playerList.get(i).addToHand(DeatlDeck.Deal(true));
                 //playerList.get(i).addToHand(DeatlDeck.Deal(true));
             } else {
                 playerList.get(i).addToHand(DeatlDeck.Deal(true));
@@ -262,6 +280,12 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                 //playerList.get(i).addToHand(DeatlDeck.Deal(false));
             }
         }
+        /*
+        playerList.get(0).addToHand(new Card(Rank.Jack,Suit.Diamond,true,261,363));
+        playerList.get(0).addToHand(new Card(Rank.Jack,Suit.Diamond,true,261,363));
+        playerList.get(1).addToHand(new Card(Rank.Ace,Suit.Diamond,true,261,363));
+        playerList.get(1).addToHand(new Card(Rank.Two,Suit.Diamond,true,261,363));
+        */
         discardedDeck.add(DeatlDeck.Deal(true));
     }
 
@@ -459,7 +483,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         for (int i = 0; i < playerList.size(); i++) {
             if (i == current_player)
                 continue;
-            int playerroundscore = playerList.get(i).evaluatescore();
+            Player player= playerList.get(i);
+            int playerroundscore = player.evaluatescore();
             if (roundscore >= playerroundscore) {
                 {
                     roundwon = false;
@@ -511,16 +536,30 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         */
 
         // Score Card from pop up
-        ScoreCardPopup scoreCardPopup = new ScoreCardPopup(playernames, playerscore, context);
-        scoreCardPopup.showScoreCard();
+        final ScoreCardPopup scoreCardPopup = new ScoreCardPopup(playernames, playerscore, context);
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scoreCardPopup.showScoreCard();
+
+                startNextRound();
+
+                // Run your task here
+            }
+        }, 1000 );
+       /* ScoreCardPopup scoreCardPopup = new ScoreCardPopup(playernames, playerscore, context);
+         scoreCardPopup.showScoreCard();
+
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        */
         current_player++;
-        startNextRound();
-    }
+         }
 
     private void startNextRound() {
 
@@ -632,8 +671,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         } else {
             AIPlayer currentaiplayer = (AIPlayer) playerList.get(current_player);
             int callpercent = currentaiplayer.getCallPercent(playerList, current_player);
-            Log.d(TAG,"Call percent inside surfaceview " +callpercent);
-            if (callpercent >= 100) {
+           // Log.d(TAG, "Call percent inside surfaceview " + callpercent);
+            if (callpercent >= 50) {
                 showdown(current_player);
             } else if (currentaiplayer.getMydeck().Count() < 3) {
                 pickBestCard(currentaiplayer.getMydeck(), discardedDeck.getTopCard());  //pick AI player deck,
