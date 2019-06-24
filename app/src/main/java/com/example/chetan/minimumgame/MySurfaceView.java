@@ -50,6 +50,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private final int no_of_CPU_players = no_of_players - 1;
     MainActivity parent;
     MyButton callminimum;
+    @State
     DiscardedDeck discardedDeck;
     private Context context;
     private DisplayMetrics metrics;
@@ -59,8 +60,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     @State
     int Screen_Height;
     private float density;
-    @State int Card_Width;
-    @State int Card_Height;
+    @State
+    int Card_Width;
+    @State
+    int Card_Height;
     private int Screen_Center_X;
     private int Screen_Center_Y;
     private int Screen_Bottom_Middle_X;
@@ -75,8 +78,10 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private int DiscardedDeck_CurrentX;
     private int DiscardedDeck_CurrentY;
     private boolean isLongTouched = false;
+    @State
     Card touchedcard = null;
-    private int cardindex = -1;
+    @State
+    int cardindex = -1;
     private Card replacedcard = null;
     private GestureDetector gestureDetector;
     private long startclicktime;
@@ -85,9 +90,13 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
     private PlayerList playerList;
     // private Player player;
     //  private ArrayList<AIPlayer> AIPlayerlist;
-    private int current_player;
-    private int roundcounter;
-    private int gamecounter;
+    @State
+    int current_player;
+    @State
+    int roundcounter;
+    @State
+    int gamecounter;
+    @State boolean isResumed=false;
 
     public MySurfaceView(Context context) {
         super(context);
@@ -123,26 +132,48 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         thread = new MySurfaceViewThread(getHolder(), this);
         setFocusable(true);
 
+       /* if(!isResumed) {
+            final ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // Removing layout listener to avoid multiple calls
+                    if (viewTreeObserver.isAlive())
+                        viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    initializevariable();
+                    AllocatedCardList();
+
+                }
+            });
+        }
+        */
+
+
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // Log.d(TAG, "Inside Surface Created method");
+         Log.d(TAG, "Inside Surface Created method");
         // To fix incorrect width and height issue moved the code
         //Solution from https://stackoverflow.com/questions/3591784/views-getwidth-and-getheight-returns-0/24035591#24035591
-        final ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
-        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                // Removing layout listener to avoid multiple calls
-                viewTreeObserver.removeOnGlobalLayoutListener(this);
-                initializevariable();
-                AllocatedCardList();
+        if(!isResumed) {
+            final ViewTreeObserver viewTreeObserver = this.getViewTreeObserver();
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    // Removing layout listener to avoid multiple calls
+                    viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    initializevariable();
+                    AllocatedCardList();
+                    isResumed=true;
 
-            }
-        });
-       // initializevariable();
-       // AllocatedCardList();
+                }
+            });
+        }
+
+
+        // initializevariable();
+        // AllocatedCardList();
         if (thread == null)
             thread = new MySurfaceViewThread(getHolder(), this);
         thread.setRunning(true);
@@ -196,9 +227,9 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.d(TAG,"Inside surface change method");
-        Screen_Width=width;
-        Screen_Height=height;
+        Log.d(TAG, "Inside surface change method");
+        Screen_Width = width;
+        Screen_Height = height;
     }
 
 
@@ -483,7 +514,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         for (int i = 0; i < playerList.size(); i++) {
             if (i == current_player)
                 continue;
-            Player player= playerList.get(i);
+            Player player = playerList.get(i);
             int playerroundscore = player.evaluatescore();
             if (roundscore >= playerroundscore) {
                 {
@@ -548,7 +579,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
 
                 // Run your task here
             }
-        }, 1000 );
+        }, 1000);
        /* ScoreCardPopup scoreCardPopup = new ScoreCardPopup(playernames, playerscore, context);
          scoreCardPopup.showScoreCard();
 
@@ -559,7 +590,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         }
         */
         current_player++;
-         }
+    }
 
     private void startNextRound() {
 
@@ -671,7 +702,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         } else {
             AIPlayer currentaiplayer = (AIPlayer) playerList.get(current_player);
             int callpercent = currentaiplayer.getCallPercent(playerList, current_player);
-           // Log.d(TAG, "Call percent inside surfaceview " + callpercent);
+            // Log.d(TAG, "Call percent inside surfaceview " + callpercent);
             if (callpercent >= 50) {
                 showdown(current_player);
             } else if (currentaiplayer.getMydeck().Count() < 3) {

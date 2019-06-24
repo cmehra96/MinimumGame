@@ -1,12 +1,15 @@
 package com.example.chetan.minimumgame;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * Class to implement all the
  * operations of DiscardedDeck
  */
-public class DiscardedDeck {
+public class DiscardedDeck implements Parcelable {
 
     private ArrayList<Card> deck = new ArrayList<>();
     private int current_X;
@@ -48,4 +51,33 @@ public class DiscardedDeck {
         return deck.size();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(this.deck);
+        dest.writeInt(this.current_X);
+        dest.writeInt(this.current_Y);
+    }
+
+    protected DiscardedDeck(Parcel in) {
+        this.deck = in.createTypedArrayList(Card.CREATOR);
+        this.current_X = in.readInt();
+        this.current_Y = in.readInt();
+    }
+
+    public static final Parcelable.Creator<DiscardedDeck> CREATOR = new Parcelable.Creator<DiscardedDeck>() {
+        @Override
+        public DiscardedDeck createFromParcel(Parcel source) {
+            return new DiscardedDeck(source);
+        }
+
+        @Override
+        public DiscardedDeck[] newArray(int size) {
+            return new DiscardedDeck[size];
+        }
+    };
 }

@@ -4,14 +4,14 @@ import org.junit.Test;
 
 public class EvaluatorTest {
 
-@Test
-        public int callPercentTest() {
+    @Test
+    public int callPercentTest() {
         PlayerList playerList = new PlayerList();
 
-        int callpercent=0;
+        int callpercent = 0;
 
 
-    return -1;
-}
+        return -1;
+    }
 
 }

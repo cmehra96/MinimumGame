@@ -55,7 +55,7 @@ public class AIPlayer extends Player {
 
     private void calculatePercentValue(PlayerList playerList, int currentaiplayer) {
         Log.d("Thread", "Inside Evaluator method");
-      //  new Evaluator().execute(playerList);
+        //  new Evaluator().execute(playerList);
         Log.d(TAG, "Inside evaluator class percent calculate method");
         PlayerList players = new PlayerList(playerList);
         Player currentplayer = players.get(playerindex);
@@ -91,18 +91,15 @@ public class AIPlayer extends Player {
                     temp_percent += new Random().nextInt(101);
                 }
             } else {
-                if((float)currentplayer.evaluatescore() / currentplayer.decksize() <=2.5)
-                {
+                if ((float) currentplayer.evaluatescore() / currentplayer.decksize() <= 2.5) {
                     temp_percent += new Random().nextInt(51) + 50; // [0,50] +50 => [50,100] //random percent from 50 to 100
-                }
-                else
-                {
+                } else {
                     temp_percent += new Random().nextInt(101);
                 }
             }
             index++;
         }
-        callpercent = temp_percent / (no_of_players-1); // excluding current player
+        callpercent = temp_percent / (no_of_players - 1); // excluding current player
         Log.d(TAG, "Call percent" + callpercent);
 
     }

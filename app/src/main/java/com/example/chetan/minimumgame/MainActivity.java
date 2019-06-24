@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,8 +30,11 @@ public class MainActivity extends Activity {
             surfaceView = (MySurfaceView) findViewById((R.id.surfaceView));
             surfaceViewThread = surfaceView.getThread();
             surfaceView.setActivity(this);
-
-            Icepick.restoreInstanceState(this, savedInstanceState);
+            if(savedInstanceState!=null)
+            {
+                surfaceView.isResumed=true;
+            }
+           // Icepick.restoreInstanceState(this, savedInstanceState);
             // if(savedInstanceState!=null)
             //    surfaceView.restoreState(savedInstanceState);
 
@@ -39,19 +43,21 @@ public class MainActivity extends Activity {
         }
 
     }
-/*
+
     @Override
     protected void onResume() {
-        surfaceView.onResume();
+   //   surfaceView.onResume();
+        Log.d("Main Activity","Inside on Resume method");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        surfaceView.onPause();
+      //  surfaceView.onPause();
+      Log.d("Main Activity","Inside on Pause method");
         super.onPause();
     }
-   */
+
 
     @Override
     public void onSaveInstanceState(Bundle state) {
@@ -59,6 +65,13 @@ public class MainActivity extends Activity {
         Icepick.saveInstanceState(this, state);
 
         // surfaceView.saveState(state);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
+
     }
 
     @Override

@@ -11,7 +11,7 @@ import android.os.Parcelable;
 
 import icepick.Bundler;
 
-public class Card implements Comparable {
+public class Card implements Comparable, Parcelable {
     private int current_X;
     private int current_Y;
     private boolean showcardface;
@@ -199,6 +199,43 @@ public class Card implements Comparable {
         }
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.current_X);
+        dest.writeInt(this.current_Y);
+        dest.writeByte(this.showcardface ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.Image, flags);
+        dest.writeInt(this.CardValue == null ? -1 : this.CardValue.ordinal());
+        dest.writeInt(this.suit == null ? -1 : this.suit.ordinal());
+    }
+
+    protected Card(Parcel in) {
+        this.current_X = in.readInt();
+        this.current_Y = in.readInt();
+        this.showcardface = in.readByte() != 0;
+        this.Image = in.readParcelable(Bitmap.class.getClassLoader());
+        int tmpCardValue = in.readInt();
+        this.CardValue = tmpCardValue == -1 ? null : Rank.values()[tmpCardValue];
+        int tmpSuit = in.readInt();
+        this.suit = tmpSuit == -1 ? null : Suit.values()[tmpSuit];
+    }
+
+    public static final Parcelable.Creator<Card> CREATOR = new Parcelable.Creator<Card>() {
+        @Override
+        public Card createFromParcel(Parcel source) {
+            return new Card(source);
+        }
+
+        @Override
+        public Card[] newArray(int size) {
+            return new Card[size];
+        }
+    };
 }
 
 
